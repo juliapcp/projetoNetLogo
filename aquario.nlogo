@@ -1,17 +1,44 @@
-breed [ cardume peixe ]
+
+breed [ peixes peixe ]
 breed [ pescadores pescador ]
 
-cardume-own [ sexo ]
+peixes-own [ sexo ]
 pescadores-own [ experiencia forca ]
+
+to configurar
+  clear-all
+  set-default-shape peixes "fish"
+  set-default-shape pescadores "person"
+  ask patches [ set pcolor sky + (random-float 0.8) - 0.5]
+  create-peixes num-peixes
+    [ set color yellow
+      set size 1.5
+      setxy random-xcor random-ycor ]
+  create-pescadores num-pescadores
+    [ set color brown
+      set size 1.5
+      setxy random-xcor random-ycor ]
+  reset-ticks
+end
+
+to comecar
+  ask peixes [ fd 1 ]
+  ask peixes [reproduzir]
+  tick
+end
+
+to reproduzir
+  if random 100 < taxa-de-reproducao [hatch (1 + random 2) [fd 1 lt 2]]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-647
-448
+874
+675
 -1
 -1
-13.0
+16.0
 1
 10
 1
@@ -21,21 +48,21 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
-0
-0
+-20
+20
+-20
+20
+1
+1
 1
 ticks
 30.0
 
 PLOT
-0
-300
-200
-450
+16
+207
+192
+341
 Reprodução de peixes no aquário
 peixes
 tempo
@@ -47,7 +74,87 @@ true
 true
 "" ""
 PENS
-"Peixes" 1.0 0 -13791810 true "" "plot count turtles"
+"Peixes" 1.0 0 -2064490 true "" "plot count peixes with [ sexo = 0 ]"
+"pen-1" 1.0 0 -1184463 true "" "plot count peixes with [ sexo = 1 ]"
+
+BUTTON
+16
+11
+93
+44
+Configurar
+configurar
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+110
+11
+189
+44
+Começar
+comecar
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+13
+94
+191
+127
+num-peixes
+num-peixes
+0
+100
+7.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+13
+52
+191
+85
+num-pescadores
+num-pescadores
+0
+100
+11.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+14
+135
+192
+168
+taxa-de-reproducao
+taxa-de-reproducao
+1
+100
+3.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
