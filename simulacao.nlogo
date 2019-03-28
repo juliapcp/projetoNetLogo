@@ -12,6 +12,7 @@ agricultor-own
   produtos
   propriedade
   multas
+  latifundio
 ]
 
 to setup
@@ -77,7 +78,7 @@ to fiscalizar
   ]
 end
 
-to comprar
+
 
 ;to update-sheep-counts
 ;  ask patches
@@ -279,7 +280,7 @@ nivelmaxpoluicao
 nivelmaxpoluicao
 0
 100
-2.0
+0.0
 1
 1
 NIL
