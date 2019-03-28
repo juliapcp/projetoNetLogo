@@ -4,8 +4,6 @@ breed [prefeito prefeitos]
 
 globals
 [
-  sheepless-neighborhoods       ;; how many patches have no sheep in any neighboring patches?
-  herding-efficiency            ;; measures how well-herded the sheep are
   nivel-de-poluicao
 ]
 agricultor-own
@@ -13,27 +11,73 @@ agricultor-own
   organico?
   produtos
   propriedade
-
+  multas
 ]
 
 to setup
   clear-all
+  criar-agricultores
+  criar-fiscais
   set-default-shape agricultor "agricultor"
   set-default-shape fiscal "fiscal"
   ask patches
-    [ set pcolor green + (random-float 0.8) - 0.4]   ;; varying the green just makes it look nicer
-  create-agricultor 1
-    [ set color 137
-      set size 3.5  ;; easier to see
-      setxy random-xcor random-ycor ]
-  create-fiscal 1
-    [ set color brown
-      set size 3.5  ;; easier to see
-      setxy random-xcor random-ycor ]
+    [ set pcolor green + (random-float 0.8) - 0.3]   ;; varying the green just makes it look nicer
+
   reset-ticks
 end
 
+to go
+  mover-agentes
+  fiscalizar
+  tick
+end
 
+to criar-agricultores
+  set-default-shape agricultor "agricultor"
+  create-agricultor num-agricultores
+    [ set color 137
+      set size 3.5
+      setxy random-xcor random-ycor ]
+end
+
+to criar-fiscais
+  set-default-shape fiscal "fiscal"
+  create-fiscal num-fiscais [
+      set color brown
+      set size 3.5
+      setxy random-xcor random-ycor ]
+end
+
+to mostrar-nivel-de-poluicao
+  clear-output
+  output-write nivel-de-poluicao
+end
+
+to mover-agentes
+ ask turtles [
+    fd 1
+    set heading random 360
+ ]
+end
+
+to fiscalizar
+  if nivel-de-poluicao >= nivelmaxpoluicao [
+    ask agricultor [
+      let distancia self
+      ask fiscal with [distance distancia < 5] [
+        face distancia
+      ]
+    ]
+    ask fiscal [
+      ask agricultor-here [
+        set multas multas + 1
+      ]
+     fd 1
+    ]
+  ]
+end
+
+to comprar
 
 ;to update-sheep-counts
 ;  ask patches
@@ -123,34 +167,16 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
-PLOT
-7
-241
-237
-414
-Herding Efficiency
-Time
-Percent
-0.0
-300.0
-0.0
-100.0
-true
-false
-"" ""
-PENS
-"efficiency" 1.0 0 -13345367 true "" "if ticks mod 50 = 0  ;; since the calculations are expensive\n[\n  update-sheep-counts\n  calculate-herding-efficiency\n  plotxy ticks herding-efficiency\n]"
-
 SLIDER
 38
 115
 208
 148
-num-sheep
-num-sheep
+num-fiscais
+num-fiscais
 0
-500
-150.0
+10
+2.0
 1
 1
 NIL
@@ -159,20 +185,20 @@ HORIZONTAL
 SLIDER
 38
 79
-208
+210
 112
-num-shepherds
-num-shepherds
+num-agricultores
+num-agricultores
 0
-100
-65.0
+10
+1.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-55
+57
 38
 112
 71
@@ -220,16 +246,44 @@ sheep-speed
 NIL
 HORIZONTAL
 
-MONITOR
-63
-192
-176
-237
-current efficiency
-herding-efficiency
+OUTPUT
+924
+10
+1043
+46
+12
+
+BUTTON
+696
+10
+919
+43
+Solicitar níveis de poluição
+mostrar-nivel-de-poluicao
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+35
+195
+214
+228
+nivelmaxpoluicao
+nivelmaxpoluicao
+0
+100
+2.0
 1
 1
-11
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -737,10 +791,6 @@ Polygon -7500403 true true 30 75 75 30 270 225 225 270
 NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
-1.0
-    org.nlogo.sdm.gui.AggregateDrawing 1
-        org.nlogo.sdm.gui.ConverterFigure "attributes" "attributes" 1 "FillColor" "Color" 130 188 183 31 43 50 50
-            org.nlogo.sdm.gui.WrappedConverter "" ""
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
