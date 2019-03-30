@@ -49,11 +49,6 @@ to criar-fiscais
       setxy random-xcor random-ycor ]
 end
 
-to mostrar-nivel-de-poluicao
-  clear-output
-  output-write nivel-de-poluicao
-end
-
 to mover-agentes
  ask turtles [
     fd 1
@@ -247,30 +242,6 @@ sheep-speed
 NIL
 HORIZONTAL
 
-OUTPUT
-924
-10
-1043
-46
-12
-
-BUTTON
-696
-10
-919
-43
-Solicitar níveis de poluição
-mostrar-nivel-de-poluicao
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 SLIDER
 35
 195
@@ -285,6 +256,17 @@ nivelmaxpoluicao
 1
 NIL
 HORIZONTAL
+
+MONITOR
+696
+18
+754
+63
+Poluição
+nivel-de-poluicao
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
