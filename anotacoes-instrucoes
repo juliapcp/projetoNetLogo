@@ -24,4 +24,3 @@ comando - manda o agente fazer uma ação. “create”, “die”, “jump”, 
 
 reporter - instruido a calcular um valor, retorna o resultado ao que for solicitado
 
-
