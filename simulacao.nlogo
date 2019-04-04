@@ -9,9 +9,11 @@ globals [
   nivel-de-poluicao
 ]
 
-agricultor-own [
-  taxa
+turtles-own [
   saldo
+  taxa
+]
+agricultor-own [
   organico?
   produtos
   propriedades
@@ -20,8 +22,7 @@ agricultor-own [
 ]
 
 empresario-own [
-  taxa
-  saldo
+  setor
 ]
 
 to setup
@@ -29,8 +30,6 @@ to setup
   criar-agricultores
   criar-fiscais
   criar-empresarios
-  set-default-shape agricultor "agricultor"
-  set-default-shape fiscal "fiscal"
   ask patches
     [ set pcolor green + (random-float 0.8) - 0.3]
   reset-ticks
@@ -38,26 +37,18 @@ end
 
 to go
   mover-agentes
-  ;;adicionar-propriedade
   fiscalizar
+  adicionar-propriedade
+  ;;comprar
+  display
   tick
 end
-
-;to adicionar-propriedade
-;  ifelse not all? agricultor with [propriedades = 1] [
-;   ask one-of-agricultores [
-;    if [random 100 < 1] [
-;        propriedades = 1
-;      ]
-;    ]
-;  ]
-;end
 
 to criar-agricultores
   set-default-shape agricultor "agricultor"
   create-agricultor num-agricultores
     [ set color 137
-      set size 3.5
+      set size 4
       setxy random-xcor random-ycor ]
 end
 
@@ -65,24 +56,31 @@ to criar-fiscais
   set-default-shape fiscal "fiscal"
   create-fiscal num-fiscais [
       set color brown
-      set size 3.5
+      set size 4
       setxy random-xcor random-ycor ]
 end
 
 to criar-empresarios
-  set-default-shape empresario "person"
+  set-default-shape empresario "empresario"
   create-empresario num-empresarios [
       set color brown
-      set size 3.5
+      set size 4
       setxy random-xcor random-ycor ]
 end
 
+to adicionar-propriedade
+  if random-float 1000 > 999 [
+    ask agricultor with [propriedades = 0] [
+      set propriedades propriedades + random 4
+    ]
+  ]
+end
 
 to mover-agentes
- ask turtles [
+  ask turtles [
     fd 1
     set heading random 360
- ]
+  ]
 end
 
 to fiscalizar
@@ -97,83 +95,37 @@ to fiscalizar
       ask agricultor-here [
         set multas multas + 1
       ]
-     fd 1
+     fd 3
      set heading random 360
     ]
   ]
 end
 
-
-
-;to update-sheep-counts
-;  ask patches
-;    [ set sheep-nearby (sum [count sheep-here] of neighbors) ]
-;  set sheepless-neighborhoods (count patches with [sheep-nearby = 0])
-;end
-;
-;to calculate-herding-efficiency
-;  set herding-efficiency (sheepless-neighborhoods / (count patches with [not any? sheep-here])) * 100
-;end
-;
-;to go
-;  ask shepherds
-;  [ ifelse carried-sheep = nobody
-;      [ search-for-sheep ]     ;; find a sheep and pick it up
-;    [ ifelse found-herd?
-;        [ find-empty-spot ]  ;; find an empty spot to drop the sheep
-;      [ find-new-herd ] ]  ;; find a herd to drop the sheep in
-;    wiggle
-;    fd 1
-;    if carried-sheep != nobody
-;    ;; bring my sheep to where I just moved to
-;    [ ask carried-sheep [ move-to myself ] ] ]
-;  ask sheep with [not hidden?]
-;  [ wiggle
-;    fd sheep-speed ]
-;  tick
-;end
-;
-;to wiggle        ;; turtle procedure
-;  rt random 50 - random 50
-;end
-;
-;to search-for-sheep ;; shepherds procedure
-;  set carried-sheep one-of sheep-here with [not hidden?]
-;  if (carried-sheep != nobody)
-;    [ ask carried-sheep
-;        [ hide-turtle ]  ;; make the sheep invisible to other shepherds
-;      set color blue     ;; turn shepherd blue while carrying sheep
-;      fd 1 ]
-;end
-;
-;to find-new-herd ;; shepherds procedure
-;  if any? sheep-here with [not hidden?]
-;    [ set found-herd? true ]
-;end
-;
-;to find-empty-spot ;; shepherds procedure
-;  if all? sheep-here [hidden?]
-;    [ ask carried-sheep
-;        [ show-turtle ]       ;; make the sheep visible again
-;      set color brown         ;; set my own color back to brown
-;      set carried-sheep nobody
-;      set found-herd? false
-;      rt random 360
-;      fd 20 ]
-;end
-
-
-; Copyright 1998 Uri Wilensky.
-; See Info tab for full copyright and license.
+;to comprar
+;  ask agricultores random num-agricultores [
+;    if [ random-float 10000 > 9999.5 ][
+;      ask empresarios [
+;        let distancia self
+;        ask agricultor with [distance distancia < 5] [
+;          face distancia
+;        ]
+;      ]
+;      ask agricultor [
+;        if [ propriedades
+;      ]
+;    ]
+;  ]
+;  ]
+;;end
 @#$#@#$#@
 GRAPHICS-WINDOW
-248
-15
-653
-421
+231
+14
+878
+662
 -1
 -1
-7.8
+9.0
 1
 10
 1
@@ -183,14 +135,14 @@ GRAPHICS-WINDOW
 1
 1
 1
--25
-25
--25
-25
+-35
+35
+-35
+35
 1
 1
 1
-ticks
+Semanas
 30.0
 
 SLIDER
@@ -202,7 +154,7 @@ num-fiscais
 num-fiscais
 0
 10
-2.0
+3.0
 1
 1
 NIL
@@ -217,42 +169,42 @@ num-agricultores
 num-agricultores
 0
 10
-2.0
+9.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-61
+43
 33
-116
+124
 73
-NIL
+Config,
 setup
 NIL
 1
 T
 OBSERVER
 NIL
-NIL
+C
 NIL
 NIL
 1
 
 BUTTON
-133
-38
-190
-71
-NIL
+144
+33
+212
+75
+Ir
 go
 T
 1
 T
 OBSERVER
 NIL
-NIL
+I
 NIL
 NIL
 0
@@ -266,17 +218,17 @@ nivelmaxpoluicao
 nivelmaxpoluicao
 0
 100
-0.0
+18.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-696
-18
-754
-63
+155
+325
+213
+370
 Poluição
 nivel-de-poluicao
 17
@@ -292,7 +244,7 @@ num-empresarios
 num-empresarios
 0
 10
-3.0
+2.0
 1
 1
 NIL
@@ -415,6 +367,23 @@ false
 0
 Circle -7500403 true true 90 90 120
 
+empresario
+false
+0
+Rectangle -1 true false 120 90 180 180
+Polygon -13345367 true false 135 90 150 105 135 180 150 195 165 180 150 105 165 90
+Polygon -16777216 true false 120 90 105 90 60 195 90 210 116 154 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 183 153 210 210 240 195 195 90 180 90 150 165
+Circle -7500403 true true 110 5 80
+Rectangle -7500403 true true 127 76 172 91
+Line -16777216 false 172 90 161 94
+Line -16777216 false 128 90 139 94
+Polygon -13345367 true false 195 225 195 300 270 270 270 195
+Rectangle -13791810 true false 180 225 195 300
+Polygon -14835848 true false 180 226 195 226 270 196 255 196
+Polygon -13345367 true false 209 202 209 216 244 202 243 188
+Line -16777216 false 180 90 150 165
+Line -16777216 false 120 90 150 165
+
 face happy
 false
 0
@@ -515,6 +484,33 @@ true
 0
 Line -7500403 true 150 0 150 150
 
+ong
+false
+0
+Polygon -7500403 true true 180 195 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285
+Polygon -7500403 true true 120 90 105 90 60 195 90 210 120 150 120 195 180 195 180 150 210 210 240 195 195 90 180 90 165 105 150 165 135 105 120 90
+Polygon -1 true false 123 90 149 141 177 90
+Rectangle -7500403 true true 123 76 176 92
+Circle -7500403 true true 110 5 80
+Line -13345367 false 121 90 194 90
+Line -16777216 false 148 143 150 196
+Rectangle -16777216 true false 116 186 182 198
+Circle -1 true false 152 143 9
+Circle -1 true false 152 166 9
+Rectangle -16777216 true false 179 164 183 186
+Polygon -2674135 true false 180 90 195 90 183 160 180 195 150 195 150 135 180 90
+Polygon -2674135 true false 120 90 105 90 114 161 120 195 150 195 150 135 120 90
+Polygon -1184463 false false 120 15 120 30 90 90 105 120 120 90 105 75 105 45 120 15 150 0 180 15 195 45 195 75 210 120 180 105 180 90 180 75 195 45 195 90 195 45 150 15 135 15 120 30 105 45 105 75 105 90 105 120
+Polygon -1184463 true false 120 75 105 105 105 120
+Line -1184463 false 195 75 195 105
+Line -1184463 false 180 75 210 120
+Line -1184463 false 150 0 195 45
+Line -1184463 false 150 15 195 45
+Line -1184463 false 135 15 180 30
+Line -1184463 false 120 30 150 0
+Line -1184463 false 105 75 120 105
+Line -1184463 false 105 75 90 105
+
 pentagon
 false
 0
@@ -528,23 +524,6 @@ Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300
 Rectangle -7500403 true true 127 79 172 94
 Polygon -7500403 true true 195 90 240 150 225 180 165 105
 Polygon -7500403 true true 105 90 60 150 75 180 135 105
-
-person business
-false
-0
-Rectangle -1 true false 120 90 180 180
-Polygon -13345367 true false 135 90 150 105 135 180 150 195 165 180 150 105 165 90
-Polygon -7500403 true true 120 90 105 90 60 195 90 210 116 154 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 183 153 210 210 240 195 195 90 180 90 150 165
-Circle -7500403 true true 110 5 80
-Rectangle -7500403 true true 127 76 172 91
-Line -16777216 false 172 90 161 94
-Line -16777216 false 128 90 139 94
-Polygon -13345367 true false 195 225 195 300 270 270 270 195
-Rectangle -13791810 true false 180 225 195 300
-Polygon -14835848 true false 180 226 195 226 270 196 255 196
-Polygon -13345367 true false 209 202 209 216 244 202 243 188
-Line -16777216 false 180 90 150 165
-Line -16777216 false 120 90 150 165
 
 person construction
 false
@@ -566,26 +545,6 @@ Rectangle -16777216 true false 135 174 150 180
 Polygon -955883 true false 105 42 111 16 128 2 149 0 178 6 190 18 192 28 220 29 216 34 201 39 167 35
 Polygon -6459832 true false 54 253 54 238 219 73 227 78
 Polygon -16777216 true false 15 285 15 255 30 225 45 225 75 255 75 270 45 285
-
-person service
-false
-0
-Polygon -7500403 true true 180 195 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285
-Polygon -1 true false 120 90 105 90 60 195 90 210 120 150 120 195 180 195 180 150 210 210 240 195 195 90 180 90 165 105 150 165 135 105 120 90
-Polygon -1 true false 123 90 149 141 177 90
-Rectangle -7500403 true true 123 76 176 92
-Circle -7500403 true true 110 5 80
-Line -13345367 false 121 90 194 90
-Line -16777216 false 148 143 150 196
-Rectangle -16777216 true false 116 186 182 198
-Circle -1 true false 152 143 9
-Circle -1 true false 152 166 9
-Rectangle -16777216 true false 179 164 183 186
-Polygon -2674135 true false 180 90 195 90 183 160 180 195 150 195 150 135 180 90
-Polygon -2674135 true false 120 90 105 90 114 161 120 195 150 195 150 135 120 90
-Polygon -2674135 true false 155 91 128 77 128 101
-Rectangle -16777216 true false 118 129 141 140
-Polygon -2674135 true false 145 91 172 77 172 101
 
 plant
 false
