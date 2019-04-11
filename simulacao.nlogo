@@ -34,7 +34,7 @@ to setup
   criar-ongs
   criar-prefeitos
   ask patches
-    [ set pcolor green + (random-float 0.8) - 0.3]
+    [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3) ]
   reset-ticks
 end
 
@@ -51,7 +51,7 @@ to criar-agricultores
   set-default-shape agricultor "agricultor"
   create-agricultor num-agricultores
     [ set color 137
-      set size 4
+      set size 5
       setxy random-xcor random-ycor
       set produtos []
   ]
@@ -61,7 +61,7 @@ to criar-prefeitos
   set-default-shape prefeito "prefeito"
   create-prefeito num-prefeitos [
       set color brown + 1
-      set size 4
+      set size 5
       setxy random-xcor random-ycor ]
 end
 
@@ -69,7 +69,7 @@ to criar-fiscais
   set-default-shape fiscal "fiscal"
   create-fiscal num-fiscais [
       set color brown
-      set size 4
+      set size 5
       setxy random-xcor random-ycor ]
 end
 
@@ -77,7 +77,7 @@ to criar-vereadores
   set-default-shape vereador "vereador"
   create-vereador num-vereadores [
       set color pink + 3.2
-      set size 4
+      set size 5
       setxy random-xcor random-ycor ]
 end
 
@@ -85,7 +85,7 @@ to criar-ongs
   set-default-shape a-ong "ong"
   create-a-ong num-ongs [
       set color brown + 3
-      set size 4
+      set size 5
       setxy random-xcor random-ycor ]
 end
 
@@ -93,7 +93,7 @@ to criar-empresarios
   set-default-shape empresario "empresario"
   create-empresario num-empresarios [
       set color yellow + 4
-      set size 4
+      set size 5
       setxy random-xcor random-ycor ]
 end
 
