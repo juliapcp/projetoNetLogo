@@ -4,6 +4,7 @@ breed [empresario empresarios]
 breed [vereador vereadores]
 breed [a-ong ong]
 breed [prefeito prefeitos]
+breed [endpatches endpatch]
 
 globals [
   nivel-de-poluicao
@@ -24,6 +25,8 @@ agricultor-own [
 empresario-own [
   setor
 ]
+endpatches-own [state new-state]
+
 
 to setup
   clear-all
@@ -34,7 +37,7 @@ to setup
   criar-ongs
   criar-prefeitos
   ask patches
-    [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3) ]
+    [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)]
   reset-ticks
 end
 
