@@ -36,6 +36,7 @@ to setup
   criar-vereadores
   criar-ongs
   criar-prefeitos
+  ask turtles [ set saldo 10000 ]
   ask patches
     [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)]
   reset-ticks
@@ -110,8 +111,8 @@ end
 
 to mover-agentes
   ask turtles [
+    set heading (heading + 45 - (random 90))
     fd 1
-    set heading random 360
   ]
 end
 
@@ -133,29 +134,29 @@ to fiscalizar
   ]
 end
 
-;to comprar
-;  ask agricultores random num-agricultores [
-;    if random-float 10000 > 9999.5 [
-;      ask empresario [
-;        let distancia self
-;        ask agricultor with [distance distancia < 5] [
-;          face distancia
-;        ]
-;      ]
-;      ask agricultor [
-;        if propriedades > 1 [
-;          set produtos lput produto mylist
-;        ]
-;      ]
-;    ]
-;  ]
-;end
+to comprar
+  ask agricultores random num-agricultores [
+    if random-float 10000 > 9999.5 [
+      ask empresario [
+        let distancia self
+        ask agricultor with [distance distancia < 5] [
+          face distancia
+        ]
+      ]
+      ask agricultor [
+        if propriedades > 1 and saldo >= [
+          set produtos lput produto produtos
+        ]
+      ]
+    ]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-231
-14
-878
-662
+227
+33
+874
+681
 -1
 -1
 9.0
