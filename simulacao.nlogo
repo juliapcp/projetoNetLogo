@@ -1,133 +1,106 @@
-breed [fiscal fiscais]
-breed [agricultor agricultores]
-breed [empresario empresarios]
-breed [vereador vereadores]
-breed [a-ong ong]
-breed [prefeito prefeitos]
-breed [endpatches endpatch]
-
-globals [
-  nivel-de-poluicao
-]
-
-turtles-own [
-  saldo
-  taxa
-]
-agricultor-own [
-  organico?
-  produtos
-  propriedades
-  multas
-  latifundio
-]
-
-empresario-own [
-  setor
-]
-endpatches-own [state new-state]
-
-
+breed [ fiscal fiscais ]
+breed [ agricultor agricultores ]
+breed [ empresario empresarios ]
+breed [ vereador vereadores ]
+breed [ a-ong ong ]
+breed [ prefeito prefeitos ]
+breed [ endpatches endpatch ]
+globals [ nivel-de-poluicao ]
+turtles-own [ saldo taxa ]
+agricultor-own [ organico? produtos propriedades multas latifundio hectares]
+empresario-own [ setor ]
 to setup
   clear-all
-  criar-agricultores
-  criar-fiscais
-  criar-empresarios
-  criar-vereadores
-  criar-ongs
-  criar-prefeitos
+  criarAgricultores
+  criarFiscais
+  criarEmpresarios
+  criarVereadores
+  criarOngs
+  criarPrefeitos
   ask turtles [ set saldo 10000 ]
-  ask patches
-    [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)]
+  ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)]
   reset-ticks
 end
-
 to go
-  mover-agentes
+  moverAgentes
   fiscalizar
-  adicionar-propriedade
+  adcPropriedade
   ;;comprar
   display
   tick
 end
-
-to criar-agricultores
-  set-default-shape agricultor "agricultor"
-  create-agricultor num-agricultores
-    [ set color 137
-      set size 5
-      setxy random-xcor random-ycor
-      set produtos []
-  ]
-  ifelse random 2 = 0 [
-    set organico? true
+to inicializar[agente]
+  if agente = 0 [ ;; agricultor
+    set organico? one-of [ true false ]
+    ifelse organico? = true [
+      set organico? true
+      set saldo 150000
+      set hectares 30
   ] [
-    set organico? false
-  ]
-  ifelse organico? = true [
-    set saldo 150000
-  ] [
-    set saldo 300000
+      set saldo 300000
+      set hectares 30
+    ]
   ]
 end
-
-to criar-prefeitos
+to criarAgricultores
+  set-default-shape agricultor "agricultor"
+  create-agricultor num-agricultores [
+    set color 137
+    set size 5
+    setxy random-xcor random-ycor
+    set produtos [] ]
+  ask turtles [ inicializar[0] ]
+end
+to criarPrefeitos
   set-default-shape prefeito "prefeito"
   create-prefeito num-prefeitos [
-      set color brown + 1
-      set size 5
-      setxy random-xcor random-ycor ]
+    set color brown + 1
+    set size 5
+    setxy random-xcor random-ycor ]
 end
-
-to criar-fiscais
+to criarFiscais
   set-default-shape fiscal "fiscal"
   create-fiscal num-fiscais [
-      set color brown
-      set size 5
-      setxy random-xcor random-ycor ]
+    set color brown
+    set size 5
+    setxy random-xcor random-ycor ]
 end
-
-to criar-vereadores
+to criarVereadores
   set-default-shape vereador "vereador"
   create-vereador num-vereadores [
-      set color pink + 3.2
-      set size 5
-      setxy random-xcor random-ycor ]
+    set color pink + 3.2
+    set size 5
+    setxy random-xcor random-ycor ]
 end
-
-to criar-ongs
+to criarOngs
   set-default-shape a-ong "ong"
   create-a-ong num-ongs [
-      set color brown + 3
-      set size 5
-      setxy random-xcor random-ycor ]
+    set color brown + 3
+    set size 5
+    setxy random-xcor random-ycor ]
 end
-
-to criar-empresarios
+to criarEmpresarios
   set-default-shape empresario "empresario"
   create-empresario num-empresarios [
-      set color yellow + 4
-      set size 5
-      setxy random-xcor random-ycor ]
+    set color yellow + 4
+    set size 5
+    setxy random-xcor random-ycor ]
 end
-
-to adicionar-propriedade
+to adcPropriedade
   if random-float 1000 > 999 [
     ask agricultor with [propriedades = 0] [
       set propriedades propriedades + random 4
     ]
   ]
 end
-
-to mover-agentes
+to moverAgentes
   ask turtles [
     set heading (heading + 45 - (random 90))
     fd 1
   ]
 end
-
 to fiscalizar
-  if nivel-de-poluicao >= nivelmaxpoluicao [
+  if nivel-de-poluicao > 99 [  ;; FIXME
     ask agricultor [
       let distancia self
       ask fiscal with [distance distancia < 5] [
@@ -138,29 +111,26 @@ to fiscalizar
       ask agricultor-here [
         set multas multas + 1
       ]
-     fd 3
-     set heading random 360
     ]
   ]
 end
-
-to comprar
-  ask agricultores random num-agricultores [
-    if random-float 10000 > 9999.5 [
-      ask empresario [
-        let distancia self
-        ask agricultor with [distance distancia < 5] [
-          face distancia
-        ]
-      ]
-      ask agricultor [
-        if propriedades > 1 and saldo >= [
-          set produtos lput produto produtos
-        ]
-      ]
-    ]
-  ]
-end
+;to comprar
+;  ask agricultores random num-agricultores [
+;    if random-float 10000 > 9999.5 [
+;      ask empresario [
+;        let distancia self
+;        ask agricultor with [distance distancia < 5] [
+;          face distancia
+;        ]
+;      ]
+;      ask agricultor [
+;        if propriedades > 1 and saldo >= [
+;          set produtos lput produto produtos
+;        ]
+;      ]
+;    ]
+;  ]
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
 227
@@ -198,7 +168,7 @@ num-fiscais
 num-fiscais
 0
 10
-0.0
+2.0
 1
 1
 NIL
@@ -213,7 +183,7 @@ num-agricultores
 num-agricultores
 0
 10
-0.0
+5.0
 1
 1
 NIL
@@ -237,10 +207,10 @@ NIL
 1
 
 BUTTON
-144
-33
-212
-75
+141
+32
+209
+74
 Ir
 go
 T
@@ -253,26 +223,11 @@ NIL
 NIL
 0
 
-SLIDER
-39
-378
-208
-411
-nivelmaxpoluicao
-nivelmaxpoluicao
-0
-100
-0.0
-1
-1
-NIL
-HORIZONTAL
-
 MONITOR
-145
-421
-203
-466
+154
+304
+212
+349
 Poluição
 nivel-de-poluicao
 17
@@ -288,7 +243,7 @@ num-empresarios
 num-empresarios
 0
 10
-0.0
+1.0
 1
 1
 NIL
