@@ -59,6 +59,16 @@ to criar-agricultores
       setxy random-xcor random-ycor
       set produtos []
   ]
+  ifelse random 2 = 0 [
+    set organico? true
+  ] [
+    set organico? false
+  ]
+  ifelse organico? = true [
+    set saldo 150000
+  ] [
+    set saldo 300000
+  ]
 end
 
 to criar-prefeitos
@@ -188,7 +198,7 @@ num-fiscais
 num-fiscais
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -203,7 +213,7 @@ num-agricultores
 num-agricultores
 0
 10
-2.0
+0.0
 1
 1
 NIL
@@ -252,7 +262,7 @@ nivelmaxpoluicao
 nivelmaxpoluicao
 0
 100
-26.0
+0.0
 1
 1
 NIL
@@ -278,7 +288,7 @@ num-empresarios
 num-empresarios
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -293,7 +303,7 @@ num-ongs
 num-ongs
 0
 10
-3.0
+0.0
 1
 1
 NIL
@@ -308,7 +318,7 @@ num-vereadores
 num-vereadores
 0
 10
-2.0
+0.0
 1
 1
 NIL
@@ -323,7 +333,7 @@ num-prefeitos
 num-prefeitos
 0
 1
-1.0
+0.0
 1
 1
 NIL
