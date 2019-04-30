@@ -6,8 +6,9 @@ breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
 globals [ nivel-de-poluicao ]
-turtles-own [ saldo taxa ]
-agricultor-own [ organico? produtos propriedades multas latifundio hectares]
+turtles-own [ saldo taxa latifundio imposto]
+agricultor-own [ organico? produtos propriedades multas hectares]
+fiscal-own [salario]
 empresario-own [ setor ]
 to setup
   clear-all
@@ -41,10 +42,12 @@ to criarAgricultores
       set saldo 150000
       set hectares 30
       set latifundio 600000
+      set imposto 15
   ] [
       set saldo 300000
       set hectares 30
       set latifundio 3000000
+      set imposto 20
     ]
   ]
 end
@@ -53,14 +56,19 @@ to criarPrefeitos
   create-prefeito num-prefeitos [
     set color brown + 1
     set size 5
-    setxy random-xcor random-ycor ]
+    setxy random-xcor random-ycor
+    set saldo 1000000
+  ]
 end
 to criarFiscais
   set-default-shape fiscal "fiscal"
   create-fiscal num-fiscais [
     set color brown
     set size 5
-    setxy random-xcor random-ycor ]
+    setxy random-xcor random-ycor
+    set saldo 100000
+    set salario 60000
+  ]
 end
 to criarVereadores
   set-default-shape vereador "vereador"
@@ -81,7 +89,16 @@ to criarEmpresarios
   create-empresario num-empresarios [
     set color yellow + 4
     set size 5
-    setxy random-xcor random-ycor ]
+    setxy random-xcor random-ycor
+    set saldo 700000
+    set latifundio 6500000
+    set setor one-of ["maquinas" "agrotoxicos" "fertilizantes"]
+    ifelse (setor = "agrotoxicos") or (setor = "fertilizantes") [
+      set imposto 45
+    ][
+      set imposto 30
+    ]
+  ]
 end
 to adcPropriedade
   if random-float 1000 > 999 [
