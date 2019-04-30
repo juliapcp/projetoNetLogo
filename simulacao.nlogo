@@ -29,29 +29,24 @@ to go
   display
   tick
 end
-to inicializar[agente]
-  ask turtles [
-    if agente = 0 [ ;; agricultor
-    show "oi"
-  ]
-  set organico? one-of [ true false ]
-  ifelse organico? = true [
-      set saldo 150000
-      set hectares 30
-  ] [
-      set saldo 300000
-      set hectares 30
-    ]
-  ]
-end
 to criarAgricultores
   set-default-shape agricultor "agricultor"
   create-agricultor num-agricultores [
     set color 137
     set size 5
     setxy random-xcor random-ycor
-    set produtos []]
-    inicializar[0]
+    set produtos []
+  set organico? one-of [ true false ]
+  ifelse organico? = true [
+      set saldo 150000
+      set hectares 30
+      set latifundio 600000
+  ] [
+      set saldo 300000
+      set hectares 30
+      set latifundio 3000000
+    ]
+  ]
 end
 to criarPrefeitos
   set-default-shape prefeito "prefeito"
@@ -185,7 +180,7 @@ num-agricultores
 num-agricultores
 0
 10
-4.0
+3.0
 1
 1
 NIL
