@@ -31,16 +31,16 @@ to go
 end
 to inicializar[agente]
   if agente = 0 [ ;; agricultor
-    set organico? one-of [ true false ]
+    show "oi"
+  ]
+  set organico? one-of [ true false ]
     ifelse organico? = true [
-      set organico? true
       set saldo 150000
       set hectares 30
   ] [
       set saldo 300000
       set hectares 30
     ]
-  ]
 end
 to criarAgricultores
   set-default-shape agricultor "agricultor"
@@ -49,7 +49,7 @@ to criarAgricultores
     set size 5
     setxy random-xcor random-ycor
     set produtos [] ]
-  ask turtles [ inicializar[0] ]
+  ask agricultor [ inicializar[0] ]
 end
 to criarPrefeitos
   set-default-shape prefeito "prefeito"
@@ -156,7 +156,7 @@ GRAPHICS-WINDOW
 1
 1
 1
-Semanas
+Dias
 30.0
 
 SLIDER
@@ -183,7 +183,7 @@ num-agricultores
 num-agricultores
 0
 10
-5.0
+4.0
 1
 1
 NIL
