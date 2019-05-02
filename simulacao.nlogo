@@ -128,6 +128,13 @@ to fiscalizar
     ]
   ]
 end
+to pagarImposto
+  if tick mod 360 0 [
+    ask turtles [
+
+    ]
+  ]
+end
 ;to comprar
 ;  ask agricultores random num-agricultores [
 ;    if random-float 10000 > 9999.5 [
