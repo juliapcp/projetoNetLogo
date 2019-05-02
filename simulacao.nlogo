@@ -18,8 +18,7 @@ to setup
   criarVereadores
   criarOngs
   criarPrefeitos
-  ask turtles [ set saldo 10000 ]
-  ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)]
+  ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)] ;; determina as cores dos patches
   reset-ticks
 end
 to go
@@ -27,6 +26,7 @@ to go
   fiscalizar
   adcPropriedade
   ;;comprar
+  pagarImposto
   display
   tick
 end
@@ -129,9 +129,10 @@ to fiscalizar
   ]
 end
 to pagarImposto
-  if tick mod 360 0 [
+  if (ticks mod 360 = 0) and (ticks != 0) [
     ask turtles [
-
+      set saldo saldo - (imposto * saldo) / 100
+      ;; o que fazer quando o dinheiro ficar negativo?
     ]
   ]
 end
