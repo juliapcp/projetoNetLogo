@@ -8,7 +8,9 @@ breed [ endpatches endpatch ]
 globals [ nivel-de-poluicao ]
 turtles-own [ saldo taxa latifundio imposto]
 agricultor-own [ organico? produtos propriedades multas hectares]
-fiscal-own [salario]
+a-ong-own [ salario ]
+vereador-own [ salario ]
+fiscal-own [ salario ]
 empresario-own [ setor ]
 to setup
   clear-all
@@ -68,6 +70,7 @@ to criarFiscais
     setxy random-xcor random-ycor
     set saldo 100000
     set salario 60000
+    set imposto 8
   ]
 end
 to criarVereadores
@@ -75,14 +78,22 @@ to criarVereadores
   create-vereador num-vereadores [
     set color pink + 3.2
     set size 5
-    setxy random-xcor random-ycor ]
+    setxy random-xcor random-ycor
+    set saldo 100000
+    set salario 180000
+    set imposto 8
+  ]
 end
 to criarOngs
   set-default-shape a-ong "ong"
   create-a-ong num-ongs [
     set color brown + 3
     set size 5
-    setxy random-xcor random-ycor ]
+    setxy random-xcor random-ycor
+    set saldo 50000
+    set imposto 8
+    set salario 14000
+  ]
 end
 to criarEmpresarios
   set-default-shape empresario "empresario"
@@ -133,6 +144,13 @@ to pagarImposto
     ask turtles [
       set saldo saldo - (imposto * saldo) / 100
       ;; o que fazer quando o dinheiro ficar negativo?
+    ]
+  ]
+end
+to receberSalario
+  if (ticks mod 360 = 0) and (ticks != 0) [
+    ask turtles [
+      set saldo saldo + salario
     ]
   ]
 end
@@ -280,7 +298,7 @@ num-ongs
 num-ongs
 0
 10
-0.0
+1.0
 1
 1
 NIL
@@ -295,7 +313,7 @@ num-vereadores
 num-vereadores
 0
 10
-0.0
+1.0
 1
 1
 NIL
@@ -310,7 +328,7 @@ num-prefeitos
 num-prefeitos
 0
 1
-0.0
+1.0
 1
 1
 NIL
