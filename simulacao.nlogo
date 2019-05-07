@@ -1,3 +1,4 @@
+extensions [table]
 breed [ fiscal fiscais ]
 breed [ agricultor agricultores ]
 breed [ empresario empresarios ]
@@ -11,7 +12,7 @@ agricultor-own [ organico? produtos propriedades multas hectares]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
-empresario-own [ setor ]
+empresario-own [ setor mercadorias ]
 to setup
   clear-all
   criarAgricultores
@@ -103,11 +104,17 @@ to criarEmpresarios
     setxy random-xcor random-ycor
     set saldo 700000
     set latifundio 6500000
+    set mercadorias table:make
     set setor one-of ["maquinas" "agrotoxicos" "fertilizantes"]
-    ifelse (setor = "agrotoxicos") or (setor = "fertilizantes") [
+    if setor = "agrotoxicos" [
       set imposto 45
-    ][
+
+    ]
+    if setor = "maquinas" [
       set imposto 30
+    ]
+    if setor = "fertilizantes"[
+      set imposto 45
     ]
   ]
 end
@@ -170,6 +177,10 @@ to comprar
       ]
     ]
   ]
+end
+
+to produzir
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
