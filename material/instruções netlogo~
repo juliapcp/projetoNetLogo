@@ -1,0 +1,27 @@
+AGENTES:
+
+- TURTLES: se movem pelo mundo 2d, quando o NetLogo é iniciado: sem turtles
+
+coordenadas (xcor,ycor) pode ter decimais, significa que pode estar posicionada em qualquer lugar do patch, não necessariamente no centro dele.
+
+- PATCHES: pedaços de caminho onde a turtle pode se mover, pode criar novas turtles, não se move mas é tão 'vivo' quanto as turtles.
+
+coordenadas (pxcor,pycor) origin (0,0), a partir desse se tem a direção horizontal e vertical dos outros. funciona como o plano cartesiano.
+
+quantidade de patches: determinado por min-pxcor,  max-pxcor, min-pycor e max-pycor. default: -16,16,-16,16. os patches nesse caso variam de -16 a 16.
+
+- LINKS: agentes que conectam duas turtles, visto como linhas com duas extremidades, cada uma com uma turtle, quando as duas morrem o link morre também.
+
+sem coordenadas.
+
+- OBSERVER: não tem localização, dá instruções a outros agentes, podendo criar novas turtles quando o NetLogo é iniciado.
+
+PROCEDIMENTOS:
+
+comandos e reporteres dizem aos agentes o que fazer.
+
+comando - manda o agente fazer uma ação. “create”, “die”, “jump”, “inspect”, ou “clear”
+
+reporter - instruido a calcular um valor, retorna o resultado ao que for solicitado
+
+os criados pelo netlogo são chamados primitivos e os criados por nós mesmos são procedimentos.
