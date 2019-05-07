@@ -27,7 +27,7 @@ to go
   moverAgentes
   fiscalizar
   adcPropriedade
-  ;;comprar
+  comprar
   pagarImposto
   display
   tick
@@ -154,23 +154,23 @@ to receberSalario
     ]
   ]
 end
-;to comprar
-;  ask agricultores random num-agricultores [
-;    if random-float 10000 > 9999.5 [
-;      ask empresario [
-;        let distancia self
-;        ask agricultor with [distance distancia < 5] [
-;          face distancia
-;        ]
-;      ]
-;      ask agricultor [
-;        if propriedades > 1 and saldo >= [
-;          set produtos lput produto produtos
-;        ]
-;      ]
-;    ]
-;  ]
-;end
+to comprar
+  ask agricultores random num-agricultores [
+    if random-float 10000 > 9999.5 [
+      ask empresario [
+        let distancia self
+        ask agricultor with [distance distancia < 5] [
+          face distancia
+        ]
+      ]
+      ask agricultor [
+        if propriedades > 1 and saldo >= [
+          set produtos lput produto produtos
+        ]
+      ]
+    ]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 227
