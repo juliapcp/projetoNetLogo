@@ -105,7 +105,7 @@ to criarEmpresarios
     set saldo 700000
     set latifundio 6500000
     set mercadorias table:make
-    set setor one-of ["maquinas" "agrotoxicos" "fertilizantes"]
+    set setor one-of ["maquinas" "agrotoxicos" "fertilizantes" "sementes"]
     if setor = "agrotoxicos" [
       set imposto 45
       table:put mercadorias "agComum" 0
@@ -117,12 +117,19 @@ to criarEmpresarios
       table:put mercadorias "semeadeira" 0
       table:put mercadorias "pulverizador" 0
       table:put mercadorias "colheitadeira" 0
+      table:put mercadorias "drone" 0
     ]
     if setor = "fertilizantes"[
       set imposto 45
-      table:put mercadorias "agComum" 0
-      table:put mercadorias "agPremium" 0
-      table:put mercadorias "agSPremium" 0
+      table:put mercadorias "FComum" 0
+      table:put mercadorias "FPremium" 0
+      table:put mercadorias "FSPremium" 0
+    ]
+    if setor = "sementes" [
+      set imposto 45
+      table:put mercadorias "hort" 0
+      table:put mercadorias "arroz" 0
+      table:put mercadorias "soja" 0
     ]
   ]
 end
@@ -224,7 +231,7 @@ SLIDER
 150
 num-fiscais
 num-fiscais
-0
+1
 10
 2.0
 1
@@ -239,7 +246,7 @@ SLIDER
 114
 num-agricultores
 num-agricultores
-0
+1
 10
 3.0
 1
@@ -299,9 +306,9 @@ SLIDER
 186
 num-empresarios
 num-empresarios
-0
+1
 10
-5.0
+3.0
 1
 1
 NIL
@@ -314,7 +321,7 @@ SLIDER
 222
 num-ongs
 num-ongs
-0
+1
 10
 1.0
 1
@@ -329,7 +336,7 @@ SLIDER
 259
 num-vereadores
 num-vereadores
-0
+1
 10
 1.0
 1
@@ -344,8 +351,8 @@ SLIDER
 296
 num-prefeitos
 num-prefeitos
-0
 1
+2
 1.0
 1
 1
