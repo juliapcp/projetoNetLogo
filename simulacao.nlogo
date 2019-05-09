@@ -21,6 +21,7 @@ to setup
   criarVereadores
   criarOngs
   criarPrefeitos
+  ; criar ["agricultores" 15000 15 0 4] FIXME
   ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)] ;; determina as cores dos patches
   reset-ticks
 end
@@ -96,6 +97,32 @@ to criarOngs
     set salario 14000
   ]
 end
+
+;to criar [agenteC saldoC impostoC salarioC]
+;  if agenteC = "agricultores" [
+;    set-default-shape agricultor "agricultor"
+;    create-agricultor num-agricultores [
+;      set color 137
+;      set size 5
+;      setxy random-xcor random-ycor
+;      set produtos []
+;      set organico? one-of [ true false ]
+;      ifelse organico? = true [
+;        set saldo saldoC
+;        set hectares 30
+;        set latifundio 600000
+;        set imposto impostoC
+;  ] [
+;      set saldo 300000
+;      set hectares 30
+;      set latifundio 3000000
+;      set imposto 20
+;      set salario salarioC
+;    ]
+;  ]
+;
+; ]
+;end
 to criarEmpresarios
   set-default-shape empresario "empresario"
   set setores (list "maquinas" "agrotoxicos" "fertilizantes" "sementes")
@@ -202,10 +229,6 @@ end
 ;      ]
 ;    ]
 ;end
-
-to produzir
-
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 227
