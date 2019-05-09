@@ -6,7 +6,7 @@ breed [ vereador vereadores ]
 breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
-globals [ nivel-de-poluicao ]
+globals [ poluicao setores ]
 turtles-own [ saldo taxa latifundio imposto]
 agricultor-own [ organico? produtos propriedades multas hectares]
 a-ong-own [ salario ]
@@ -98,6 +98,12 @@ to criarOngs
 end
 to criarEmpresarios
   set-default-shape empresario "empresario"
+  set setores (list "maquinas" "agrotoxicos" "fertilizantes" "sementes")
+  let i 0
+  while [ i < (num-empresarios - 4)] [
+    set setores lput item random 4 setores setores
+    set i i + 1
+  ]
   create-empresario num-empresarios [
     set color yellow + 4
     set size 5
@@ -105,12 +111,13 @@ to criarEmpresarios
     set saldo 700000
     set latifundio 6500000
     set mercadorias table:make
-    set setor one-of ["maquinas" "agrotoxicos" "fertilizantes" "sementes"]
+    set setor one-of setores
     if setor = "agrotoxicos" [
       set imposto 45
       table:put mercadorias "agComum" 0
       table:put mercadorias "agPremium" 0
       table:put mercadorias "agSPremium" 0
+      set setores remove-item position "agrotoxicos" setores setores
     ]
     if setor = "maquinas" [
       set imposto 30
@@ -118,18 +125,21 @@ to criarEmpresarios
       table:put mercadorias "pulverizador" 0
       table:put mercadorias "colheitadeira" 0
       table:put mercadorias "drone" 0
+      set setores remove-item position "maquinas" setores setores
     ]
     if setor = "fertilizantes"[
       set imposto 45
       table:put mercadorias "FComum" 0
       table:put mercadorias "FPremium" 0
       table:put mercadorias "FSPremium" 0
+      set setores remove-item position "fertilizantes" setores setores
     ]
     if setor = "sementes" [
       set imposto 45
       table:put mercadorias "hort" 0
       table:put mercadorias "arroz" 0
       table:put mercadorias "soja" 0
+      set setores remove-item position "sementes" setores setores
     ]
   ]
 end
@@ -147,7 +157,7 @@ to moverAgentes
   ]
 end
 to fiscalizar
-  if nivel-de-poluicao > 99 [  ;; FIXME
+  if poluicao > 99 [  ;; FIXME
     ask agricultor [
       let distancia self
       ask fiscal with [distance distancia < 5] [
@@ -294,7 +304,7 @@ MONITOR
 212
 349
 Poluição
-nivel-de-poluicao
+poluicao
 17
 1
 11
@@ -306,9 +316,9 @@ SLIDER
 186
 num-empresarios
 num-empresarios
-1
-10
-3.0
+4
+8
+4.0
 1
 1
 NIL
