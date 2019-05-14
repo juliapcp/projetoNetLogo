@@ -30,7 +30,7 @@ to go
   fiscalizar
   adcPropriedade
   comprar
-  pagarImposto
+  impostoSalario
   display
   tick
 end
@@ -184,7 +184,7 @@ to moverAgentes
   ]
 end
 to fiscalizar
-  if poluicao > 99 [  ;; FIXME
+  if poluicao > 99 [  ; FIXME
     ask agricultor [
       let distancia self
       ask fiscal with [distance distancia < 5] [
@@ -198,18 +198,14 @@ to fiscalizar
     ]
   ]
 end
-to pagarImposto
+to impostoSalario
   if (ticks mod 360 = 0) and (ticks != 0) [
     ask turtles [
+      if is-ong? self = true or is-fiscais? self = true or is-vereadores? self = true [
+        set saldo saldo + salario
+      ]
       set saldo saldo - (imposto * saldo) / 100
       ;; o que fazer quando o dinheiro ficar negativo?
-    ]
-  ]
-end
-to receberSalario
-  if (ticks mod 360 = 0) and (ticks != 0) [
-    ask turtles [
-      set saldo saldo + salario
     ]
   ]
 end
@@ -224,7 +220,7 @@ to comprar
         ]
       ]
       ask agricultor [
-        if propriedades > 1 and saldo >= 1000 [ ; FIXME
+        if propriedades >= 1 and saldo >= 1000 [ ; FIXME
           set produtos lput one-of table:keys compraveis produtos
         ]
       ]
@@ -283,7 +279,7 @@ num-agricultores
 num-agricultores
 1
 10
-3.0
+4.0
 1
 1
 NIL
