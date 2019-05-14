@@ -8,7 +8,7 @@ breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
 globals [ poluicao setores ]
 turtles-own [ saldo taxa latifundio imposto]
-agricultor-own [ organico? produtos propriedades multas hectares]
+agricultor-own [ organico? produtos propriedades multas hectares compraveis]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
@@ -29,7 +29,7 @@ to go
   moverAgentes
   fiscalizar
   adcPropriedade
-  ;; comprar
+  comprar
   pagarImposto
   display
   tick
@@ -213,22 +213,24 @@ to receberSalario
     ]
   ]
 end
-;to comprar
-;  ask agricultores random num-agricultores [
-;    if random-float 10000 > 9999.5 [
-;      ask empresario [
-;        let distancia self
-;        ask agricultor with [distance distancia < 5] [
-;          face distancia
-;        ]
-;      ]
-;      ask agricultor [
-;        if propriedades > 1 and saldo >= [
-;          set produtos lput produto produtos
-;        ]
-;      ]
-;    ]
-;end
+to comprar
+  ask agricultor [
+    if random-float 10000 > 9999.5[
+      ask empresario [
+        let distancia self
+        set compraveis mercadorias
+        ask agricultor with [distance distancia < 5] [
+          face distancia
+        ]
+      ]
+      ask agricultor [
+        if propriedades > 1 and saldo >= 1000 [ ; FIXME
+          set produtos lput one-of table:keys compraveis produtos
+        ]
+      ]
+    ]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 227
