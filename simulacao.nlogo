@@ -141,31 +141,33 @@ to criarEmpresarios
     set setor one-of setores
     if setor = "agrotoxicos" [
       set imposto 45
-      table:put mercadorias "agComum" 0
-      table:put mercadorias "agPremium" 0
-      table:put mercadorias "agSPremium" 0
+      ; OS VALORES PODEM NÃO SER ESSES, APENAS PARA TESTE SERÃO ATRIBUÍDOS ESTES
+      ; mercadorias nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
+      table:put mercadorias "agComum" (list 0 100 (list 0 200))
+      table:put mercadorias "agPremium" (list 0 150 (list 0 300))
+      table:put mercadorias "agSPremium" (list 0 200 (list 0 400))
       set setores remove-item position "agrotoxicos" setores setores
     ]
     if setor = "maquinas" [
       set imposto 30
-      table:put mercadorias "semeadeira" 0
-      table:put mercadorias "pulverizador" 0
-      table:put mercadorias "colheitadeira" 0
-      table:put mercadorias "drone" 0
+      table:put mercadorias "semeadeira" (list 0 200 (list 0 400))
+      table:put mercadorias "pulverizador" (list 200 (list 0 400))
+      table:put mercadorias "colheitadeira" (list 0 210 (list 0 420))
+      table:put mercadorias "drone" (list 0 210 (list 0 420))
       set setores remove-item position "maquinas" setores setores
     ]
     if setor = "fertilizantes"[
       set imposto 45
-      table:put mercadorias "FComum" 0
-      table:put mercadorias "FPremium" 0
-      table:put mercadorias "FSPremium" 0
+      table:put mercadorias "FComum" (list 0 210 (list 0 420))
+      table:put mercadorias "FPremium" (list 0 210 (list 0 420))
+      table:put mercadorias "FSPremium" (list 0 210 (list 0 420))
       set setores remove-item position "fertilizantes" setores setores
     ]
     if setor = "sementes" [
       set imposto 45
-      table:put mercadorias "hort" 0
-      table:put mercadorias "arroz" 0
-      table:put mercadorias "soja" 0
+      table:put mercadorias "hort" (list 0 210 (list 0 420))
+      table:put mercadorias "arroz" (list 0 210 (list 0 420))
+      table:put mercadorias "soja" (list 0 210 (list 0 420))
       set setores remove-item position "sementes" setores setores
     ]
   ]
@@ -220,14 +222,15 @@ to comprar
       ]
       ask agricultor [
         if propriedades >= 1 and saldo >= 1000 [ ; FIXME
-          print "entrou"
           let produto one-of table:keys compraveis
+          let preco item 1(table:get compraveis produto)
           ifelse table:has-key? produtos produto [
             table:put produtos produto ((table:get produtos produto) + 1)
-
+            set saldo saldo - preco
           ]
           [
             table:put produtos produto 1
+            set saldo saldo - preco
           ]
         ]
       ]
@@ -398,27 +401,18 @@ NIL
 HORIZONTAL
 
 @#$#@#$#@
-## WHAT IS IT?
+## O QUE É ISSO?
+
+## COMO ISSO FUNCIONA?
 
 
-## HOW IT WORKS
+## COMO USAR?
 
+## COISAS PARA PERCEBER
 
-## HOW TO USE IT
-
-## THINGS TO NOTICE
-
-## THINGS TO TRY
-
-## EXTENDING THE MODEL
-
-## NETLOGO FEATURES
-
-## RELATED MODELS
+## ENTENDENDO A SIMULAÇÃO
 
 ## CREDITS AND REFERENCES
-
-## HOW TO CITE
 @#$#@#$#@
 default
 true
