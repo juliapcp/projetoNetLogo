@@ -210,7 +210,7 @@ to impostoSalario
 end
 to comprar
   ask agricultor [
-    if random-float 10000 > 9999.5[
+    if random-float 1000 > 999 [
       ask empresario [
         let distancia self
         set compraveis mercadorias
@@ -220,8 +220,15 @@ to comprar
       ]
       ask agricultor [
         if propriedades >= 1 and saldo >= 1000 [ ; FIXME
+          print "entrou"
           let produto one-of table:keys compraveis
-          table:put produtos produto (table:get produtos produto + 1)
+          ifelse table:has-key? produtos produto [
+            table:put produtos produto ((table:get produtos produto) + 1)
+
+          ]
+          [
+            table:put produtos produto 1
+          ]
         ]
       ]
     ]
@@ -264,7 +271,7 @@ num-fiscais
 num-fiscais
 1
 10
-2.0
+3.0
 1
 1
 NIL
@@ -279,7 +286,7 @@ num-agricultores
 num-agricultores
 1
 10
-4.0
+2.0
 1
 1
 NIL
@@ -354,7 +361,7 @@ num-ongs
 num-ongs
 1
 10
-1.0
+3.0
 1
 1
 NIL
@@ -369,7 +376,7 @@ num-vereadores
 num-vereadores
 1
 10
-1.0
+2.0
 1
 1
 NIL
