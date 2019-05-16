@@ -2,13 +2,14 @@ extensions [table]
 globals [ compraveis produtos ]
 to go
   set produtos table:make
-  let produto one-of table:keys compraveis
-  ifelse table:get produtos
-  table:put produtos produto (table:get produtos produto + 1)
   set compraveis table:make
-  set produto table:keys compraveis
-  table:put compraveis produto 0
-  show compraveis
+  table:put compraveis "salame" 1
+  let produto (one-of table:keys compraveis)
+  ifelse table:has-key? produtos produto [
+    table:put produtos produto ((table:get produtos produto) + 1)]
+  [
+    table:put produtos produto 1
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
