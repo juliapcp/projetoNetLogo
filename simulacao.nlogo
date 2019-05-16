@@ -40,7 +40,7 @@ to criarAgricultores
     set color 137
     set size 5
     setxy random-xcor random-ycor
-    set produtos []
+    set produtos table:make
   set organico? one-of [ true false ]
   ifelse organico? = true [
       set saldo 150000
@@ -205,7 +205,6 @@ to impostoSalario
         set saldo saldo + salario
       ]
       set saldo saldo - (imposto * saldo) / 100
-      ;; o que fazer quando o dinheiro ficar negativo?
     ]
   ]
 end
@@ -221,7 +220,8 @@ to comprar
       ]
       ask agricultor [
         if propriedades >= 1 and saldo >= 1000 [ ; FIXME
-          set produtos lput one-of table:keys compraveis produtos
+          let produto one-of table:keys compraveis
+          table:put produtos produto (table:get produtos produto + 1)
         ]
       ]
     ]
