@@ -6,13 +6,13 @@ breed [ vereador vereadores ]
 breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
-globals [ poluicao setores compraveis ]
+globals [ poluicao setores produtos ]
 turtles-own [ saldo taxa latifundio imposto]
-agricultor-own [ organico? produtos propriedades multas hectares]
+agricultor-own [ organico? propriedades multas hectares]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
-empresario-own [ setor mercadorias ]
+empresario-own [ setor ]
 to setup
   clear-all
   criarAgricultores
@@ -40,7 +40,6 @@ to criarAgricultores
     set color 137
     set size 5
     setxy random-xcor random-ycor
-    set produtos table:make
   set organico? one-of [ true false ]
   ifelse organico? = true [
       set saldo 150000
@@ -137,37 +136,37 @@ to criarEmpresarios
     setxy random-xcor random-ycor
     set saldo 700000
     set latifundio 6500000
-    set mercadorias table:make
+    set produtos table:make
     set setor one-of setores
     if setor = "agrotoxicos" [
       set imposto 45
       ; OS VALORES PODEM NÃO SER ESSES, APENAS PARA TESTE SERÃO ATRIBUÍDOS ESTES
-      ; mercadorias nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
-      table:put mercadorias "agComum" (list 0 100 (list 0 200))
-      table:put mercadorias "agPremium" (list 0 150 (list 0 300))
-      table:put mercadorias "agSPremium" (list 0 200 (list 0 400))
+      ; produtos nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
+      table:put produtos "agComum" (list 0 100 (list 0 200))
+      table:put produtos "agPremium" (list 0 150 (list 0 300))
+      table:put produtos "agSPremium" (list 0 200 (list 0 400))
       set setores remove-item position "agrotoxicos" setores setores
     ]
     if setor = "maquinas" [
       set imposto 30
-      table:put mercadorias "semeadeira" (list 0 200 (list 0 400))
-      table:put mercadorias "pulverizador" (list 200 (list 0 400))
-      table:put mercadorias "colheitadeira" (list 0 210 (list 0 420))
-      table:put mercadorias "drone" (list 0 210 (list 0 420))
+      table:put produtos "semeadeira" (list 0 200 (list 0 400))
+      table:put produtos "pulverizador" (list 200 (list 0 400))
+      table:put produtos "colheitadeira" (list 0 210 (list 0 420))
+      table:put produtos "drone" (list 0 210 (list 0 420))
       set setores remove-item position "maquinas" setores setores
     ]
     if setor = "fertilizantes"[
       set imposto 45
-      table:put mercadorias "FComum" (list 0 210 (list 0 420))
-      table:put mercadorias "FPremium" (list 0 210 (list 0 420))
-      table:put mercadorias "FSPremium" (list 0 210 (list 0 420))
+      table:put produtos "FComum" (list 0 210 (list 0 420))
+      table:put produtos "FPremium" (list 0 210 (list 0 420))
+      table:put produtos "FSPremium" (list 0 210 (list 0 420))
       set setores remove-item position "fertilizantes" setores setores
     ]
     if setor = "sementes" [
       set imposto 45
-      table:put mercadorias "hort" (list 0 210 (list 0 420))
-      table:put mercadorias "arroz" (list 0 210 (list 0 420))
-      table:put mercadorias "soja" (list 0 210 (list 0 420))
+      table:put produtos "hort" (list 0 210 (list 0 420))
+      table:put produtos "arroz" (list 0 210 (list 0 420))
+      table:put produtos "soja" (list 0 210 (list 0 420))
       set setores remove-item position "sementes" setores setores
     ]
   ]
@@ -211,26 +210,25 @@ to impostoSalario
   ]
 end
 to comprar
+  print produtos
   ask agricultor [
     if random-float 1000 > 999 [
       ask empresario [
         let distancia self
-        set compraveis mercadorias
         ask agricultor with [distance distancia < 5] [
           face distancia
         ]
       ]
       ask agricultor [
-        if propriedades >= 1 and saldo >= 1000 [ ; FIXME
-          let produto one-of table:keys compraveis
-          let preco item 1(table:get compraveis produto)
-          ifelse table:has-key? produtos produto [
-            table:put produtos produto ((table:get produtos produto) + 1)
-            set saldo saldo - preco
-          ]
-          [
-            table:put produtos produto 1
-            set saldo saldo - preco
+        let produto one-of table:keys produtos
+        let preco item 1(item 2(table:get  produtos produto))
+        let qtEmp item 0(table:get produtos produto)
+        if propriedades >= 1 and saldo >= preco and qtEmp > 0 [
+          table:put produtos produto (item 0(item 2(table:get produtos produto)) + 1)
+          set saldo saldo - preco
+          ask empresario [
+            set saldo saldo + preco
+            table:put produtos produto (item 0(table:get produtos produto)) - 1
           ]
         ]
       ]

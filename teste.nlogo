@@ -3,19 +3,27 @@ globals [ compraveis produtos ]
 to go
   set produtos table:make
   set compraveis table:make
-  table:put compraveis "salame" (list 1 2000 7)
+  ; mercadorias nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
+  table:put compraveis "salame" (list 1 2000 (list 0 200))
+  table:put compraveis "salada" (list 2 3000 (list 0 200))
   let produto (one-of table:keys compraveis)
   print produto
-  let preco item 1(table:get compraveis produto)
-  print preco
+  tableitem 0(item 2(table:get compraveis produto)) + 1
+  let prProducao item 1(table:get compraveis produto)
+  let qEmpr item 0(table:get compraveis produto)
+  let qAgr item 0(item 2(table:get compraveis produto))
+  let prCompra item 1(item 2(table:get  compraveis produto))
+  print produto
+  print prProducao
+  print prCompra
+  print qAgr
+  print qEmpr
 ;  ifelse table:has-key? produtos produto [
 ;    table:put produtos produto ((table:get produtos produto) + 1)]
 ;  [
 ;    table:put produtos produto 1
 ;  ]
 end
-;show item 1 (item 0 (table:values compraveis))
-;show item 0(table:get compraveis (one-of table:keys compraveis))
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
