@@ -3,19 +3,16 @@ globals [ produtos ]
 to go
   set produtos table:make
   ; mercadorias nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
-  table:put produtos "salame" (list 1 2000 (list 0 200.489372 ))
-  table:put produtos "salada" (list 2 3000 (list 0 200))
+  table:put produtos "salame" (list 0 2000 (list 0 200.489372 ))
+  table:put produtos "salada" (list 0 3000 (list 0 200))
   let produto (one-of table:keys produtos)
   print produto
   let prProducao item 1(table:get produtos produto)
   let qEmpr item 0(table:get produtos produto)
-  let qAgr item 0(item 2(table:get produtos produto))
-  let precision prCompra item 1(item 2(table:get  produtos produto)) 2
-  print produto
-  print prProducao
-  print prCompra
+  let qAgr item 2(table:get produtos produto)
+  let prCompra precision item 1(item 2(table:get produtos produto)) 2
+  set qAgr replace-item 1 qAgr 12332
   print qAgr
-  print qEmpr
 ;  ifelse table:has-key? produtos produto [
 ;    table:put produtos produto ((table:get produtos produto) + 1)]
 ;  [

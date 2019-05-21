@@ -6,13 +6,13 @@ breed [ vereador vereadores ]
 breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
-globals [ poluicao setores produtos ]
+globals [ poluicao setores mercadorias ]
 turtles-own [ saldo taxa latifundio imposto]
-agricultor-own [ organico? propriedades multas hectares]
+agricultor-own [ organico? propriedades multas hectares ]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
-empresario-own [ setor ]
+empresario-own [ setor produtos ]
 to setup
   clear-all
   criarAgricultores
@@ -143,31 +143,31 @@ to criarEmpresarios
       set imposto 45
       ; OS VALORES PODEM NÃO SER ESSES, APENAS PARA TESTE SERÃO ATRIBUÍDOS ESTES
       ; produtos nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
-      table:put produtos "agComum" (list 0 100 (list 0 200))
-      table:put produtos "agPremium" (list 0 150 (list 0 300))
-      table:put produtos "agSPremium" (list 0 200 (list 0 400))
+      table:put produtos "agComum" (list 1 100 (list 0 200))
+      table:put produtos "agPremium" (list 1 150 (list 0 300))
+      table:put produtos "agSPremium" (list 1 200 (list 0 400))
       set setores remove-item position "agrotoxicos" setores setores
     ]
     if setor = "maquinas" [
       set imposto 30
-      table:put produtos "semeadeira" (list 0 200 (list 0 400))
-      table:put produtos "pulverizador" (list 200 (list 0 400))
-      table:put produtos "colheitadeira" (list 0 210 (list 0 420))
+      table:put produtos "semeadeira" (list 1 200 (list 0 400))
+      table:put produtos "pulverizador" (list 0 200 (list 0 400))
+      table:put produtos "colheitadeira" (list 1 210 (list 0 420))
       table:put produtos "drone" (list 0 210 (list 0 420))
       set setores remove-item position "maquinas" setores setores
     ]
     if setor = "fertilizantes"[
       set imposto 45
       table:put produtos "FComum" (list 0 210 (list 0 420))
-      table:put produtos "FPremium" (list 0 210 (list 0 420))
+      table:put produtos "FPremium" (list 1 210 (list 0 420))
       table:put produtos "FSPremium" (list 0 210 (list 0 420))
       set setores remove-item position "fertilizantes" setores setores
     ]
     if setor = "sementes" [
       set imposto 45
-      table:put produtos "hort" (list 0 210 (list 0 420))
+      table:put produtos "hort" (list 1 210 (list 0 420))
       table:put produtos "arroz" (list 0 210 (list 0 420))
-      table:put produtos "soja" (list 0 210 (list 0 420))
+      table:put produtos "soja" (list 1 210 (list 0 420))
       set setores remove-item position "sementes" setores setores
     ]
   ]
@@ -218,21 +218,22 @@ to comprar
         ask agricultor with [distance distancia < 5] [
           face distancia
         ]
+      set mercadorias produtos
       ]
-      ask agricultor [
-        let produto one-of table:keys produtos
-        let preco item 1 item 2 table:get produtos produto
-        let qtEmp item 0 table:get produtos produto
+    ask agricultor [
+      let produto one-of table:keys mercadorias
+      let qtEmp item 0 table:get mercadorias produto
+        let preco item 1 (item 2 (table:get  mercadorias produto))
         if propriedades >= 1 and saldo >= preco and qtEmp > 0 [
-          table:put produtos produto (item 0(item 2(table:get produtos produto)) + 1)
+          let qAgr item 2(table:get produtos produto)
+          set qAgr replace-item 0 qAgr (item 0 qAgr + 1) ;;arrumar
           set saldo saldo - preco
           ask empresario [
             set saldo saldo + preco
-            table:put produtos produto ((item 0(table:get produtos produto)) - 1)
+            table:put produtos produto table:get produtos produto - 1
           ]
         ]
       ]
-      print produtos
     ;]
   ]
 end
