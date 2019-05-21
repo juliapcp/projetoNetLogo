@@ -31,6 +31,7 @@ to go
   adcPropriedade
   comprar
   impostoSalario
+  arredondar
   display
   tick
 end
@@ -210,9 +211,8 @@ to impostoSalario
   ]
 end
 to comprar
-  print produtos
   ask agricultor [
-    if random-float 1000 > 999 [
+    ;; if random-float 1000 > 999 [
       ask empresario [
         let distancia self
         ask agricultor with [distance distancia < 5] [
@@ -221,18 +221,24 @@ to comprar
       ]
       ask agricultor [
         let produto one-of table:keys produtos
-        let preco item 1(item 2(table:get  produtos produto))
-        let qtEmp item 0(table:get produtos produto)
+        let preco item 1 item 2 table:get produtos produto
+        let qtEmp item 0 table:get produtos produto
         if propriedades >= 1 and saldo >= preco and qtEmp > 0 [
           table:put produtos produto (item 0(item 2(table:get produtos produto)) + 1)
           set saldo saldo - preco
           ask empresario [
             set saldo saldo + preco
-            table:put produtos produto (item 0(table:get produtos produto)) - 1
+            table:put produtos produto ((item 0(table:get produtos produto)) - 1)
           ]
         ]
       ]
-    ]
+      print produtos
+    ;]
+  ]
+end
+to arredondar
+  ask turtles [
+    set saldo precision saldo 2
   ]
 end
 @#$#@#$#@
@@ -287,7 +293,7 @@ num-agricultores
 num-agricultores
 1
 10
-2.0
+3.0
 1
 1
 NIL

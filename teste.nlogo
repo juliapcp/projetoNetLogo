@@ -1,18 +1,16 @@
 extensions [table]
-globals [ compraveis produtos ]
+globals [ produtos ]
 to go
   set produtos table:make
-  set compraveis table:make
   ; mercadorias nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
-  table:put compraveis "salame" (list 1 2000 (list 0 200))
-  table:put compraveis "salada" (list 2 3000 (list 0 200))
-  let produto (one-of table:keys compraveis)
+  table:put produtos "salame" (list 1 2000 (list 0 200.489372 ))
+  table:put produtos "salada" (list 2 3000 (list 0 200))
+  let produto (one-of table:keys produtos)
   print produto
-  tableitem 0(item 2(table:get compraveis produto)) + 1
-  let prProducao item 1(table:get compraveis produto)
-  let qEmpr item 0(table:get compraveis produto)
-  let qAgr item 0(item 2(table:get compraveis produto))
-  let prCompra item 1(item 2(table:get  compraveis produto))
+  let prProducao item 1(table:get produtos produto)
+  let qEmpr item 0(table:get produtos produto)
+  let qAgr item 0(item 2(table:get produtos produto))
+  let precision prCompra item 1(item 2(table:get  produtos produto)) 2
   print produto
   print prProducao
   print prCompra
