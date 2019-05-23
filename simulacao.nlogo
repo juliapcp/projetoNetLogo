@@ -8,7 +8,7 @@ breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
 globals [ poluicao setores mercadorias ]
 turtles-own [ saldo taxa latifundio imposto]
-agricultor-own [ organico? propriedades multas hectares produtos ]
+agricultor-own [ organico? propriedades multas hectares ]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
@@ -218,26 +218,27 @@ to comprar
         ask agricultor with [distance distancia < 5] [
           face distancia
         ]
-
-      ]
-    ask agricultor [
       let produto one-of table:keys produtos
       let qEmp item 0(table:get produtos produto)
-        let prComp item 1(item 2(table:get produtos produto))
-        if propriedades >= 1 and saldo >= preco and qtEmp > 0 [
-          let qAgr item 2(table:get mercadorias produto)
-          set qAgr replace-item 0 qAgr (item 0 qAgr + 1) ;;arrumar
-          set saldo saldo - preco
+      let prProd item 1(table:get produtos produto)
+      let prComp item 1(item 2(table:get produtos produto))
+      let qAgr item 0(item 2(table:get produtos produto))
+      ask agricultor [
+        if propriedades >= 1 and saldo >= prComp and qEmp > 0 [
+          set qAgr (qAgr + 1)
+          set saldo saldo - prComp
           ask empresario [
-            set saldo saldo + preco
-          print produtos
-            table:put produtos produto table:get produtos produto - 1
-          print produtos
-          ]
+            set qEmp (qEmp - 1)
+            set saldo saldo + prComp
+            table:put produtos produto (list qEmp prProd (list qAgr prComp))
+            print produtos
         ]
       ]
-    ;]
+    ]
+   ]
+ ;]
   ]
+
 end
 to arredondar
   ask turtles [
