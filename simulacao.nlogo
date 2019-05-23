@@ -8,7 +8,7 @@ breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
 globals [ poluicao setores mercadorias ]
 turtles-own [ saldo taxa latifundio imposto]
-agricultor-own [ organico? propriedades multas hectares ]
+agricultor-own [ organico? propriedades multas hectares produtos ]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
@@ -22,7 +22,7 @@ to setup
   criarOngs
   criarPrefeitos
   ; criar ["agricultores" 15000 15 0 4] FIXME
-  ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)] ;; determina as cores dos patches
+  ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)]
   reset-ticks
 end
 to go
@@ -218,19 +218,21 @@ to comprar
         ask agricultor with [distance distancia < 5] [
           face distancia
         ]
-      set mercadorias produtos
+
       ]
     ask agricultor [
-      let produto one-of table:keys mercadorias
-      let qtEmp item 0 table:get mercadorias produto
-        let preco item 1 (item 2 (table:get  mercadorias produto))
+      let produto one-of table:keys produtos
+      let qEmp item 0(table:get produtos produto)
+        let prComp item 1(item 2(table:get produtos produto))
         if propriedades >= 1 and saldo >= preco and qtEmp > 0 [
-          let qAgr item 2(table:get produtos produto)
+          let qAgr item 2(table:get mercadorias produto)
           set qAgr replace-item 0 qAgr (item 0 qAgr + 1) ;;arrumar
           set saldo saldo - preco
           ask empresario [
             set saldo saldo + preco
+          print produtos
             table:put produtos produto table:get produtos produto - 1
+          print produtos
           ]
         ]
       ]
@@ -279,7 +281,7 @@ num-fiscais
 num-fiscais
 1
 10
-3.0
+4.0
 1
 1
 NIL
@@ -369,7 +371,7 @@ num-ongs
 num-ongs
 1
 10
-3.0
+4.0
 1
 1
 NIL
