@@ -21,7 +21,6 @@ to setup
   criarVereadores
   criarOngs
   criarPrefeitos
-  ; criar ["agricultores" 15000 15 0 4] FIXME
   ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)]
   reset-ticks
 end
@@ -98,31 +97,6 @@ to criarOngs
   ]
 end
 
-;to criar [agenteC saldoC impostoC salarioC]
-;  if agenteC = "agricultores" [
-;    set-default-shape agricultor "agricultor"
-;    create-agricultor num-agricultores [
-;      set color 137
-;      set size 5
-;      setxy random-xcor random-ycor
-;      set produtos []
-;      set organico? one-of [ true false ]
-;      ifelse organico? = true [
-;        set saldo saldoC
-;        set hectares 30
-;        set latifundio 600000
-;        set imposto impostoC
-;  ] [
-;      set saldo 300000
-;      set hectares 30
-;      set latifundio 3000000
-;      set imposto 20
-;      set salario salarioC
-;    ]
-;  ]
-;
-; ]
-;end
 to criarEmpresarios
   set-default-shape empresario "empresario"
   set setores (list "maquinas" "agrotoxicos" "fertilizantes" "sementes")
@@ -212,11 +186,11 @@ to impostoSalario
 end
 to comprar
   ask agricultor [
-    ;; if random-float 1000 > 999 [
+     if random-float 1000 > 999 [
       ask empresario [
-        let distancia self
-        ask agricultor with [distance distancia < 5] [
-          face distancia
+        let agente self
+        ask agricultor with [distance agente < 5] [
+          face agente
         ]
       let produto one-of table:keys produtos
       let qEmp item 0(table:get produtos produto)
@@ -224,21 +198,22 @@ to comprar
       let prComp item 1(item 2(table:get produtos produto))
       let qAgr item 0(item 2(table:get produtos produto))
       ask agricultor [
-        if propriedades >= 1 and saldo >= prComp and qEmp > 0 [
-          set qAgr (qAgr + 1)
-          set saldo saldo - prComp
-          ask empresario [
-            set qEmp (qEmp - 1)
-            set saldo saldo + prComp
-            table:put produtos produto (list qEmp prProd (list qAgr prComp))
-            print produtos
+          if qEmp <= 0 [
+            ; produzir
+          ]
+          if (propriedades >= 1) and (saldo >= prComp) and (qEmp > 0) [
+            set qAgr (qAgr + 1)
+            set saldo saldo - prComp
+            ask empresario [
+              set qEmp (qEmp - 1)
+              set saldo saldo + prComp
+              table:put produtos produto (list qEmp prProd (list qAgr prComp))
+            ]
+          ]
         ]
       ]
     ]
-   ]
- ;]
   ]
-
 end
 to arredondar
   ask turtles [
@@ -297,7 +272,7 @@ num-agricultores
 num-agricultores
 1
 10
-3.0
+4.0
 1
 1
 NIL

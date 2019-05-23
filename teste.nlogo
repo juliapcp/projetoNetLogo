@@ -19,22 +19,82 @@ globals [ produtos ]
 ;;    table:put produtos produto 1
 ;;  ]
 ;end
-to go; adicionando produto à quantidade do agricultor e tirando o dinheiro
-  set produtos table:make
-  table:put produtos "agComum" (list 1 100 (list 4 200))
-  let produto one-of table:keys produtos
-  let qEmp item 0(table:get produtos produto)
-  let prComp item 1(item 2(table:get produtos produto))
-  let prProd item 1(table:get produtos produto)
-  let qAgr item 0(item 2(table:get produtos produto))
-  set qAgr (qAgr + 1)
-  ; set saldo saldo - prComp
-  ; tirando produto da quantidade do empresário
-  set qEmp qEmp - 1
-  ; set saldo saldo + prComp
-  table:put produtos produto (list qEmp prProd (list qAgr prComp))
-  print produtos
-end
+;to go; adicionando produto à quantidade do agricultor e tirando o dinheiro
+;  set produtos table:make
+;  table:put produtos "agComum" (list 323 100 (list 4 200))
+;  let produto one-of table:keys produtos
+;  let qEmp item 0(table:get produtos produto)
+;  print qEmp
+;  let prComp item 1(item 2(table:get produtos produto))
+;  let prProd item 1(table:get produtos produto)
+;  let qAgr item 0(item 2(table:get produtos produto))
+;  set qAgr (qAgr + 1)
+;  ; set saldo saldo - prComp
+;  ; tirando produto da quantidade do empresário
+;  set qEmp qEmp - 1
+;  ; set saldo saldo + prComp
+;  table:put produtos produto (list qEmp prProd (list qAgr prComp))
+;  print produtos
+;end
+
+; criando funcao para retornar a table desmembrada
+
+;to-report function [x]
+;  report x
+;end
+;to go
+;  print function 4
+;end
+;to-report function [x]
+;  let prComp item 1(item 2(table:get produtos "salame"))
+;  report prComp
+;end
+;to go
+;  set produtos table:make
+;  ; mercadorias nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
+;  table:put produtos "salame" (list 0 2000 (list 0 20088 ))
+;  table:put produtos "salada" (list 0 3000 (list 0 200))
+;  print function 4
+;end
+;
+;to criar [agenteC saldoC impostoC salarioC]
+;  if agenteC = "agricultores" [
+;    set-default-shape agricultor "agricultor"
+;    create-agricultor num-agricultores [
+;      set color 137
+;      set size 5
+;      setxy random-xcor random-ycor
+;      set produtos []
+;      set organico? one-of [ true false ]
+;      ifelse organico? = true [
+;        set saldo saldoC
+;        set hectares 30
+;        set latifundio 600000
+;        set imposto impostoC
+;  ] [
+;      set saldo 300000
+;      set hectares 30
+;      set latifundio 3000000
+;      set imposto 20
+;      set salario salarioC
+;    ]
+;  ]
+;
+; ]
+;end
+;
+;to produzir
+;  ask empresario [
+;    let produto one-of table:keys produtos
+;    let qEmp item 0(table:get produtos produto)
+;    let prProd item 1(table:get produtos produto)
+;    let prComp item 1(item 2(table:get produtos produto))
+;    let qAgr item 0(item 2(table:get produtos produto))
+;    if qEmp <= 0 and random-float 1000 > 999 [
+;      ; producao
+;    ]
+;  ]
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
