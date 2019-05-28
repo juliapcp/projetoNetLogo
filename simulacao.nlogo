@@ -197,27 +197,32 @@ to comprar
         let prProd item 1(table:get produtos produto)
         let prComp item 2(table:get produtos produto)
         if qEmp <= 0 [
-          ; produzir
+          print "oi"
         ]
         ask agricultor [
           if table:has-key? compras produto = false [
             table:put compras produto 0
           ]
-          let qAgr table:get compras produto
-          if (propriedades >= 1) and (saldo >= prComp) and (qEmp > 0) [
-            set qAgr (qAgr + 1)
-            set saldo saldo - prComp
-            ask empresario [
-              set qEmp (qEmp - 1)
-              set saldo saldo + prComp
-              table:put produtos produto (list qEmp prProd prComp)
+          if table:get compras produto = 0 or random-float 100 > 99.5 [
+            let qAgr table:get compras produto
+            if (propriedades >= 1) and (saldo >= prComp) and (qEmp > 0) [
+              set qAgr (qAgr + 1)
+              set saldo saldo - prComp
+              ask empresario [
+                set qEmp (qEmp - 1)
+                set saldo saldo + prComp
+                table:put produtos produto (list qEmp prProd prComp)
+              ]
+              table:put compras produto qAgr
             ]
-            table:put compras produto qAgr
           ]
         ]
       ]
     ]
   ]
+end
+to produzir
+
 end
 to arredondar
   ask turtles [
