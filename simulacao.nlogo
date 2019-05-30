@@ -6,7 +6,7 @@ breed [ vereador vereadores ]
 breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
-globals [ poluicao setores mercadorias ]
+globals [ poluicao setores mercadorias qEmp prProd prComp ]
 turtles-own [ saldo taxa latifundio imposto]
 agricultor-own [ organico? propriedades multas hectares compras]
 a-ong-own [ salario ]
@@ -186,28 +186,29 @@ to impostoSalario
 end
 to comprar
   ask agricultor [
-    if random-float 1000 > 999 [
+    if random-float 100 > 99.5 [
       ask empresario [
         let agente self
         ask agricultor with [distance agente < 5] [
           face agente
         ]
         let produto one-of table:keys produtos
-        let qEmp item 0(table:get produtos produto)
-        let prProd item 1(table:get produtos produto)
-        let prComp item 2(table:get produtos produto)
+        set qEmp item 0(table:get produtos produto)
+        set prProd item 1(table:get produtos produto)
+        set prComp item 2(table:get produtos produto)
         if qEmp <= 0 [
-          print "oi"
+          produzirEmp produto
         ]
         ask agricultor [
           if table:has-key? compras produto = false [
             table:put compras produto 0
           ]
-          if table:get compras produto = 0 or random-float 100 > 99.5 [
+          if table:get compras produto = 0 or random-float 1000 > 999 [
             let qAgr table:get compras produto
             if (propriedades >= 1) and (saldo >= prComp) and (qEmp > 0) [
               set qAgr (qAgr + 1)
               set saldo saldo - prComp
+              print "entrou"
               ask empresario [
                 set qEmp (qEmp - 1)
                 set saldo saldo + prComp
@@ -221,8 +222,12 @@ to comprar
     ]
   ]
 end
-to produzir
-
+to produzirEmp [ prod ]
+  ask one-of empresario [
+    if setor = "agrotoxicos" and random-float 50 > 49.9 [
+      table:put produtos prod (list (qEmp + 1) prProd prComp)
+    ]
+  ]
 end
 to arredondar
   ask turtles [
@@ -281,7 +286,7 @@ num-agricultores
 num-agricultores
 1
 10
-4.0
+3.0
 1
 1
 NIL
@@ -341,7 +346,7 @@ num-empresarios
 num-empresarios
 4
 8
-4.0
+6.0
 1
 1
 NIL
