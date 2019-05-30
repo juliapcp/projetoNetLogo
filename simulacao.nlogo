@@ -6,7 +6,7 @@ breed [ vereador vereadores ]
 breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
-globals [ poluicao setores mercadorias qEmp prProd prComp ]
+globals [ poluicao setores mercadorias qEmp prProd prComp agenteA agenteE]
 turtles-own [ saldo taxa latifundio imposto]
 agricultor-own [ organico? propriedades multas hectares compras]
 a-ong-own [ salario ]
@@ -41,6 +41,7 @@ to criarAgricultores
     set size 5
     setxy random-xcor random-ycor
     set hectares 100
+    set agenteA self
     set compras table:make
     set organico? one-of [ true false ]
     ifelse organico? = true [
@@ -147,7 +148,7 @@ to criarEmpresarios
   ]
 end
 to adcPropriedade
-  if random-float 1000 > 999 [
+  if random-float 100 > 70 [
     ask agricultor with [propriedades = 0] [
       set propriedades propriedades + random 4
     ]
@@ -185,31 +186,30 @@ to impostoSalario
   ]
 end
 to comprar
-  ask agricultor [
-    if random-float 100 > 99.5 [
-      ask empresario [
-        let agente self
-        ask agricultor with [distance agente < 5] [
-          face agente
-        ]
-        let produto one-of table:keys produtos
-        set qEmp item 0(table:get produtos produto)
-        set prProd item 1(table:get produtos produto)
-        set prComp item 2(table:get produtos produto)
-        if qEmp <= 0 [
-          produzirEmp produto
-        ]
-        ask agricultor [
+  if random-float 100 > 99 [
+    ask empresario [
+      set agenteE self
+      ask agricultor with [distance agenteE < 5] [
+        set agenteA self
+        face agenteE
+      ]
+      let produto one-of table:keys produtos
+      set qEmp item 0(table:get produtos produto)
+      set prProd item 1(table:get produtos produto)
+      set prComp item 2(table:get produtos produto)
+      ifelse qEmp <= 0 [
+        produzirEmp produto
+      ] [
+        ask agenteA [
           if table:has-key? compras produto = false [
             table:put compras produto 0
           ]
           if table:get compras produto = 0 or random-float 1000 > 999 [
             let qAgr table:get compras produto
-            if (propriedades >= 1) and (saldo >= prComp) and (qEmp > 0) [
+            if (propriedades >= 1) and (saldo >= prComp + 200) [
               set qAgr (qAgr + 1)
               set saldo saldo - prComp
-              print "entrou"
-              ask empresario [
+              ask agenteE [
                 set qEmp (qEmp - 1)
                 set saldo saldo + prComp
                 table:put produtos produto (list qEmp prProd prComp)
@@ -223,8 +223,23 @@ to comprar
   ]
 end
 to produzirEmp [ prod ]
-  ask one-of empresario [
-    if setor = "agrotoxicos" and random-float 50 > 49.9 [
+  if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
+    ask one-of empresario with [setor = "agrotoxicos"] [
+      table:put produtos prod (list (qEmp + 1) prProd prComp)
+    ]
+  ]
+  if prod = "arroz" or prod = "hort" or prod = "soja"[
+    ask one-of empresario with [setor = "sementes"] [
+      table:put produtos prod (list (qEmp + 1) prProd prComp)
+    ]
+  ]
+  if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
+    ask one-of empresario with [setor = "fertilizantes"] [
+      table:put produtos prod (list (qEmp + 1) prProd prComp)
+    ]
+  ]
+  if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
+    ask one-of empresario with [setor = "maquinas"] [
       table:put produtos prod (list (qEmp + 1) prProd prComp)
     ]
   ]
@@ -286,7 +301,7 @@ num-agricultores
 num-agricultores
 1
 10
-3.0
+4.0
 1
 1
 NIL
