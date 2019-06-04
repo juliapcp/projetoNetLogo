@@ -31,6 +31,7 @@ to go
   comprar
   impostoSalario
   arredondar
+  plantar
   display
   tick
 end
@@ -160,6 +161,17 @@ to moverAgentes
     fd 1
   ]
 end
+to plantar
+  ask turtles [
+    if random-float 50 > 49.9 [
+      let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
+      print instrumentos
+      let tempo ticks
+      ;if table:has-key? compras  = true [
+      ;]
+    ]
+  ]
+end
 to fiscalizar
   if poluicao > 99 [  ; FIXME
     ask agricultor [
@@ -206,7 +218,7 @@ to comprar
           ]
           if table:get compras produto = 0 or random-float 1000 > 999 [
             let qAgr table:get compras produto
-            if (propriedades >= 1) and (saldo >= prComp + 200) [
+            if (propriedades >= 1) and (saldo >= prComp + 10) [
               set qAgr (qAgr + 1)
               set saldo saldo - prComp
               ask agenteE [
@@ -214,7 +226,10 @@ to comprar
                 set saldo saldo + prComp
                 table:put produtos produto (list qEmp prProd prComp)
               ]
-              table:put compras produto qAgr
+              ; 0 agrotoxicos 1 sementes 2 fertilizantes 3 maquinas
+              if produto = "agComum" or produto = "agPremium" or produto = "agSPremium" [
+                ; table:put compras produto qAgr
+              ]
             ]
           ]
         ]
