@@ -8,7 +8,7 @@ breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
 globals [ poluicao setores mercadorias qEmp prProd prComp agenteA agenteE]
 turtles-own [ saldo taxa latifundio imposto]
-agricultor-own [ organico? propriedades multas hectares compras]
+agricultor-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
@@ -43,7 +43,14 @@ to criarAgricultores
     setxy random-xcor random-ycor
     set hectares 100
     set agenteA self
-    set compras table:make
+    set comprasAgr table:make
+    table:put comprasAgr (list "agComum" "agPremium" "agSPremium") (list 0 0 0 )
+    set comprasFer table:make
+    table:put comprasFer (list "FComum" "FPremium" "FSPremium" ) (list 0 0 0)
+    set comprasSem table:make
+    table:put comprasSem (list "arroz" "hort" "soja" ) (list 0 0 0)
+    set comprasMaq table:make
+    table:put comprasMaq (list "drone" "semeadeira" "pulverizador" "colheitadeira") (list 0 0 0 0)
     set organico? one-of [ true false ]
     ifelse organico? = true [
       set saldo 150000
@@ -213,10 +220,8 @@ to comprar
         produzirEmp produto
       ] [
         ask agenteA [
-          if table:has-key? compras produto = false [
-            table:put compras produto 0
-          ]
-          if table:get compras produto = 0 or random-float 1000 > 999 [
+          if produto = "agComum" or produto = "agPremium" or produto = "agSPremium" [
+            if table:get comprasAgr  or random-float 1000 > 999 [
             let qAgr table:get compras produto
             if (propriedades >= 1) and (saldo >= prComp + 10) [
               set qAgr (qAgr + 1)
@@ -226,15 +231,13 @@ to comprar
                 set saldo saldo + prComp
                 table:put produtos produto (list qEmp prProd prComp)
               ]
-              ; 0 agrotoxicos 1 sementes 2 fertilizantes 3 maquinas
-              if produto = "agComum" or produto = "agPremium" or produto = "agSPremium" [
-                ; table:put compras produto qAgr
-              ]
-            ]
           ]
+          ; 0 agrotoxicos 1 sementes 2 fertilizantes 3 maquinas
         ]
       ]
     ]
+  ]
+]
   ]
 end
 to produzirEmp [ prod ]

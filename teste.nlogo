@@ -1,5 +1,5 @@
 extensions [table]
-globals [ produtos ]
+globals [ produtos comprasFer ]
 ;to go
 ;  set produtos table:make
 ;  ; mercadorias nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
@@ -95,6 +95,12 @@ globals [ produtos ]
 ;    ]
 ;  ]
 ;end
+
+to go
+  set comprasFer table:make
+    table:put comprasFer (list "FComum" "FPremium" "FSPremium" ) (list 0 0 0)
+  print comprasFer
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
