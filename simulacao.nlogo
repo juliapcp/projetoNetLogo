@@ -172,7 +172,7 @@ to plantar
   ask turtles [
     if random-float 50 > 49.9 [
       let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
-      print instrumentos
+
       let tempo ticks
       ;if table:has-key? compras  = true [
       ;]
@@ -220,10 +220,10 @@ to comprar
         produzirEmp produto
       ] [
         ask agenteA [
+          let posicao position produto (item 0(item 0 table:to-list comprasAgr))
           if produto = "agComum" or produto = "agPremium" or produto = "agSPremium" [
-            if table:get comprasAgr  or random-float 1000 > 999 [
-            let qAgr table:get compras produto
-            if (propriedades >= 1) and (saldo >= prComp + 10) [
+            let qAgr item posicao(item 0(table:values comprasAgr))
+            if qAgr <= 0 or random-float 1000 > 999 and (propriedades >= 1) and (saldo >= prComp + 10) [
               set qAgr (qAgr + 1)
               set saldo saldo - prComp
               ask agenteE [
@@ -231,13 +231,12 @@ to comprar
                 set saldo saldo + prComp
                 table:put produtos produto (list qEmp prProd prComp)
               ]
+            ]
+            ; 0 agrotoxicos 1 sementes 2 fertilizantes 3 maquinas
           ]
-          ; 0 agrotoxicos 1 sementes 2 fertilizantes 3 maquinas
         ]
       ]
     ]
-  ]
-]
   ]
 end
 to produzirEmp [ prod ]
@@ -319,7 +318,7 @@ num-agricultores
 num-agricultores
 1
 10
-4.0
+3.0
 1
 1
 NIL
@@ -847,7 +846,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.4
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
