@@ -171,8 +171,7 @@ end
 to plantar
   ask turtles [
     if random-float 50 > 49.9 [
-      let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
-
+      let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ]
       let tempo ticks
       ;if table:has-key? compras  = true [
       ;]
@@ -222,20 +221,44 @@ to comprar
         ask agenteA [
           let posicao position produto (item 0(item 0 table:to-list comprasAgr))
           if produto = "agComum" or produto = "agPremium" or produto = "agSPremium" [
-            let qAgr item posicao(item 0(table:values comprasAgr))
-            if qAgr <= 0 or random-float 1000 > 999 and (propriedades >= 1) and (saldo >= prComp + 10) [
-              set qAgr (qAgr + 1)
-              set saldo saldo - prComp
-              ask agenteE [
-                set qEmp (qEmp - 1)
-                set saldo saldo + prComp
-                table:put produtos produto (list qEmp prProd prComp)
-              ]
-            ]
-            ; 0 agrotoxicos 1 sementes 2 fertilizantes 3 maquinas
+            comprarA produto comprasAgr prComp
+          ]
+          if produto = "FComum" or produto = "FPremium" or produto = "FSPremium" [
+            comprarA produto comprasFer prComp
+          ]
+          if produto = "soja" or produto = "arroz" or produto = "hort" [
+            comprarA produto comprasSem prComp
+          ]
+          if produto = "semeadeira" or produto = "drone" or produto = "pulverizador" or produto = "colheitadeira" [
+            comprarA produto comprasMaq prComp
           ]
         ]
       ]
+    ]
+  ]
+end
+to comprarA [ produto comprasTipo prCompra ]
+  let posicao position produto (item 0(item 0 table:to-list comprasTipo))
+  let quant item posicao(item 0(table:values comprasTipo))
+  if quant <= 0 or random-float 1000 > 999 and (propriedades >= 1) and (saldo >= prCompra + 10) [
+    let lista (item 0(table:values comprasTipo))
+    let c 0
+    let nLista []
+    while [c < length lista][
+      ifelse c = posicao [
+        set nLista lput (item c(lista) + 1) nLista
+      ]
+      [
+        set nLista lput (item c(lista)) nLista
+      ]
+      set c c + 1
+    ]
+    set saldo saldo - prCompra
+    table:put comprasTipo (item 0(table:keys comprasTipo)) nLista
+    ask agenteE [
+      set qEmp (qEmp - 1)
+      set saldo saldo + prCompra
+      table:put produtos produto (list qEmp prProd prCompra)
     ]
   ]
 end

@@ -1,5 +1,5 @@
 extensions [table]
-globals [ produtos comprasFer ]
+globals [ produtos comprasAgr ]
 ;to go
 ;  set produtos table:make
 ;  ; mercadorias nome (quantidade na empresa, preço para a producao (quantidade com o agricultor, preço para compra))
@@ -96,11 +96,29 @@ globals [ produtos comprasFer ]
 ;  ]
 ;end
 
-to go
-  set comprasFer table:make
-    table:put comprasFer (list "FComum" "FPremium" "FSPremium" ) (list 0 0 0)
-  print comprasFer
-end
+;to go
+;  set comprasAgr table:make
+;  table:put comprasAgr (list "agComum" "agPremium" "agSPremium" ) (list 0 0 0)
+;  let aaa (item 0(table:values comprasAgr))
+;  let c 0
+;  let new []
+;  while [c < length aaa][
+;    ifelse c = 2[
+;      set new lput (item c(aaa) + 1) new
+;    ]
+;    [
+;      set new lput (item c(aaa)) new
+;    ]
+;    set c c + 1
+;  ]
+;  print new
+;end
+
+;to go
+;  set comprasAgr table:make
+;  table:put comprasAgr (list "agComum" "agPremium" "agSPremium" ) (list 0 0 0)
+;  print (item 0(table:keys comprasAgr))
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -488,7 +506,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.4
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
