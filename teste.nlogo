@@ -119,6 +119,10 @@ globals [ produtos comprasAgr ]
 ;  table:put comprasAgr (list "agComum" "agPremium" "agSPremium" ) (list 0 0 0)
 ;  print (item 0(table:keys comprasAgr))
 ;end
+
+to go
+  diffuse
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210

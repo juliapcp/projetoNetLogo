@@ -6,7 +6,7 @@ breed [ vereador vereadores ]
 breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
-globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral]
+globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui]
 turtles-own [ saldo taxa latifundio imposto poluicao]
 agricultor-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
 a-ong-own [ salario ]
@@ -32,6 +32,7 @@ to go
   impostoSalario
   arredondar
   plantar
+  somar
   display
   tick
 end
@@ -125,31 +126,31 @@ to criarEmpresarios
     if setor = "agrotoxicos" [
       set imposto 45
       ; produtos nome (quantidade na empresa, preço para compra)
-      table:put produtos "agComum" (list 1 one-of [5 10 15])
-      table:put produtos "agPremium" (list 1 one-of [15 20 25])
-      table:put produtos "agSPremium" (list 1 one-of [25 30 35])
+      table:put produtos "agComum" (list 1 one-of [5 10 15] 1)
+      table:put produtos "agPremium" (list 1 one-of [15 20 25] 2)
+      table:put produtos "agSPremium" (list 1 one-of [25 30 35] 3)
       set setores remove-item position "agrotoxicos" setores setores
     ]
     if setor = "maquinas" [
       set imposto 30
-      table:put produtos "semeadeira" (list 1 one-of [25 30 35])
-      table:put produtos "pulverizador" (list 0 one-of [395 400 405])
-      table:put produtos "colheitadeira" (list 1 one-of [55 60 65])
-      table:put produtos "drone" (list 0 one-of [85 90 95])
+      table:put produtos "semeadeira" (list 1 one-of [25 30 35] 3)
+      table:put produtos "pulverizador" (list 0 one-of [395 400 405] 40)
+      table:put produtos "colheitadeira" (list 1 one-of [55 60 65] 6)
+      table:put produtos "drone" (list 0 one-of [85 90 95] 9)
       set setores remove-item position "maquinas" setores setores
     ]
     if setor = "fertilizantes"[
       set imposto 45
-      table:put produtos "FComum" (list 0 one-of [25 30 35])
-      table:put produtos "FPremium" (list 1 one-of [55 60 65])
-      table:put produtos "FSPremium" (list 0 one-of [85 90 95])
+      table:put produtos "FComum" (list 0 one-of [25 30 35] 3)
+      table:put produtos "FPremium" (list 1 one-of [55 60 65] 6)
+      table:put produtos "FSPremium" (list 0 one-of [85 90 95] 9)
       set setores remove-item position "fertilizantes" setores setores
     ]
     if setor = "sementes" [
       set imposto 45
-      table:put produtos "hort" (list 1 one-of [5 10 15])
-      table:put produtos "arroz" (list 0 one-of [15 20 25])
-      table:put produtos "soja" (list 1 one-of [25 30 35])
+      table:put produtos "hort" (list 1 one-of [5 10 15] 1)
+      table:put produtos "arroz" (list 0 one-of [15 20 25] 2)
+      table:put produtos "soja" (list 1 one-of [25 30 35] 3)
       set setores remove-item position "sementes" setores setores
     ]
   ]
@@ -214,7 +215,8 @@ to comprar
       ]
       let produto one-of table:keys produtos
       set qEmp item 0(table:get produtos produto)
-      set prComp item 2(table:get produtos produto)
+      set prComp item 1(table:get produtos produto)
+      set polui item 2(table:get produtos produto)
       ifelse qEmp <= 0 [
         produzirEmp produto
       ] [
@@ -238,63 +240,65 @@ to comprar
   ]
 end
 to comprarA [ produto comprasTipo prCompra ]
-  ask turtles [
-    let posicao position produto (item 0(item 0 table:to-list comprasTipo))
-    let quant item posicao(item 0(table:values comprasTipo))
-    if quant <= 0 or random-float 1000 > 999 and (propriedades >= 1) and (saldo >= prCompra + 10) [
-      let lista (item 0(table:values comprasTipo))
-      let c 0
-      let nLista []
-      while [c < length lista][
-        ifelse c = posicao [
-          set nLista lput (item c(lista) + 1) nLista
-        ][ set nLista lput (item c(lista)) nLista ]
-        set c c + 1
-      ]
-      set saldo saldo - prCompra
-      table:put comprasTipo (item 0(table:keys comprasTipo)) nLista
-      ask agenteE [
-        set qEmp (qEmp - 1)
-        set saldo saldo + prCompra
-        table:put produtos produto (list qEmp prCompra)
-      ]
+  let posicao position produto (item 0(item 0 table:to-list comprasTipo))
+  let quant item posicao(item 0(table:values comprasTipo))
+  if quant <= 0 or random-float 1000 > 999 and (propriedades >= 1) and (saldo >= prCompra + 10) [
+    let lista (item 0(table:values comprasTipo))
+    let c 0
+    let nLista []
+    while [c < length lista][
+      ifelse c = posicao [
+        set nLista lput (item c(lista) + 1) nLista
+      ][ set nLista lput (item c(lista)) nLista ]
+      set c c + 1
+    ]
+    set saldo saldo - prCompra
+    table:put comprasTipo (item 0(table:keys comprasTipo)) nLista
+    ask agenteE [
+      set qEmp (qEmp - 1)
+      set saldo saldo + prCompra
+      table:put produtos produto (list qEmp prCompra polui)
     ]
   ]
 end
 to produzirEmp [ prod ]
-  ask turtles [
-    if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
-      ask one-of empresario with [setor = "agrotoxicos"] [
-        table:put produtos prod (list (qEmp + 1) prComp)
-        set poluicao poluicao + 1
-        if prod = "agPremium" [
-          set poluicao poluicao + 1
-        ]
-        if prod = "agSPremium" [
-          set poluicao poluicao + 2
-        ]
-      ]
+  if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
+    ask one-of empresario with [setor = "agrotoxicos"] [
+      let pol item 2(table:get produtos prod)
+      table:put produtos prod (list (qEmp + 1) prComp)
+      set poluicao poluicao + pol
     ]
-    if prod = "arroz" or prod = "hort" or prod = "soja"[
-      ask one-of empresario with [setor = "sementes"] [
-        table:put produtos prod (list (qEmp + 1) prComp)
-      ]
+  ]
+  if prod = "arroz" or prod = "hort" or prod = "soja"[
+    ask one-of empresario with [setor = "sementes"] [
+      let pol item 2(table:get produtos prod)
+      table:put produtos prod (list (qEmp + 1) prComp)
+      set poluicao poluicao + pol
     ]
-    if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
-      ask one-of empresario with [setor = "fertilizantes"] [
-        table:put produtos prod (list (qEmp + 1) prComp)
-      ]
+  ]
+  if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
+    ask one-of empresario with [setor = "fertilizantes"] [
+      let pol item 2(table:get produtos prod)
+      table:put produtos prod (list (qEmp + 1) prComp)
+      set poluicao poluicao + pol
     ]
-    if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
-      ask one-of empresario with [setor = "maquinas"] [
-        table:put produtos prod (list (qEmp + 1) prComp)
-      ]
+  ]
+  if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
+    ask one-of empresario with [setor = "maquinas"] [
+      let pol item 2(table:get produtos prod)
+      table:put produtos prod (list (qEmp + 1) prComp)
+      set poluicao poluicao + pol
     ]
   ]
 end
 to arredondar
   ask turtles [
     set saldo precision saldo 2
+  ]
+end
+to somar
+  ask turtles [
+    set polGeral polGeral + poluicao
   ]
 end
 @#$#@#$#@
