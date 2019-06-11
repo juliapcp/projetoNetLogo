@@ -6,8 +6,8 @@ breed [ vereador vereadores ]
 breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
-globals [ poluicao setores mercadorias qEmp prProd prComp agenteA agenteE]
-turtles-own [ saldo taxa latifundio imposto]
+globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral]
+turtles-own [ saldo taxa latifundio imposto poluicao]
 agricultor-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
 a-ong-own [ salario ]
 vereador-own [ salario ]
@@ -124,33 +124,32 @@ to criarEmpresarios
     set setor one-of setores
     if setor = "agrotoxicos" [
       set imposto 45
-      ; OS VALORES PODEM NÃO SER ESSES, APENAS PARA TESTE SERÃO ATRIBUÍDOS ESTES
-      ; produtos nome (quantidade na empresa, preço para a producao, preço para compra)
-      table:put produtos "agComum" (list 1 100 200)
-      table:put produtos "agPremium" (list 1 150 300)
-      table:put produtos "agSPremium" (list 1 200 400)
+      ; produtos nome (quantidade na empresa, preço para compra)
+      table:put produtos "agComum" (list 1 one-of [5 10 15])
+      table:put produtos "agPremium" (list 1 one-of [15 20 25])
+      table:put produtos "agSPremium" (list 1 one-of [25 30 35])
       set setores remove-item position "agrotoxicos" setores setores
     ]
     if setor = "maquinas" [
       set imposto 30
-      table:put produtos "semeadeira" (list 1 200 400)
-      table:put produtos "pulverizador" (list 0 200 400)
-      table:put produtos "colheitadeira" (list 1 210 420)
-      table:put produtos "drone" (list 0 210 420)
+      table:put produtos "semeadeira" (list 1 one-of [25 30 35])
+      table:put produtos "pulverizador" (list 0 one-of [395 400 405])
+      table:put produtos "colheitadeira" (list 1 one-of [55 60 65])
+      table:put produtos "drone" (list 0 one-of [85 90 95])
       set setores remove-item position "maquinas" setores setores
     ]
     if setor = "fertilizantes"[
       set imposto 45
-      table:put produtos "FComum" (list 0 210 420)
-      table:put produtos "FPremium" (list 1 210 420)
-      table:put produtos "FSPremium" (list 0 210 420)
+      table:put produtos "FComum" (list 0 one-of [25 30 35])
+      table:put produtos "FPremium" (list 1 one-of [55 60 65])
+      table:put produtos "FSPremium" (list 0 one-of [85 90 95])
       set setores remove-item position "fertilizantes" setores setores
     ]
     if setor = "sementes" [
       set imposto 45
-      table:put produtos "hort" (list 1 210 420)
-      table:put produtos "arroz" (list 0 210 420)
-      table:put produtos "soja" (list 1 210 420)
+      table:put produtos "hort" (list 1 one-of [5 10 15])
+      table:put produtos "arroz" (list 0 one-of [15 20 25])
+      table:put produtos "soja" (list 1 one-of [25 30 35])
       set setores remove-item position "sementes" setores setores
     ]
   ]
@@ -171,7 +170,7 @@ end
 to plantar
   ask turtles [
     if random-float 50 > 49.9 [
-      let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ]
+      let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
       let tempo ticks
       ;if table:has-key? compras  = true [
       ;]
@@ -179,23 +178,25 @@ to plantar
   ]
 end
 to fiscalizar
-  if poluicao > 99 [  ; FIXME
-    ask agricultor [
-      let distancia self
-      ask fiscal with [distance distancia < 5] [
-        face distancia
+  ask turtles [
+    if poluicao > 99 [  ; FIXME
+      ask agricultor [
+        let distancia self
+        ask fiscal with [distance distancia < 5] [
+          face distancia
+        ]
       ]
-    ]
-    ask fiscal [
-      ask agricultor-here [
-        set multas multas + 1
+      ask fiscal [
+        ask agricultor-here [
+          set multas multas + 1
+        ]
       ]
     ]
   ]
 end
 to impostoSalario
-  if (ticks mod 360 = 0) and (ticks != 0) [
-    ask turtles [
+  ask turtles [
+    if (ticks mod 360 = 0) and (ticks != 0) [
       if is-ong? self = true or is-fiscais? self = true or is-vereadores? self = true [
         set saldo saldo + salario
       ]
@@ -213,7 +214,6 @@ to comprar
       ]
       let produto one-of table:keys produtos
       set qEmp item 0(table:get produtos produto)
-      set prProd item 1(table:get produtos produto)
       set prComp item 2(table:get produtos produto)
       ifelse qEmp <= 0 [
         produzirEmp produto
@@ -238,49 +238,57 @@ to comprar
   ]
 end
 to comprarA [ produto comprasTipo prCompra ]
-  let posicao position produto (item 0(item 0 table:to-list comprasTipo))
-  let quant item posicao(item 0(table:values comprasTipo))
-  if quant <= 0 or random-float 1000 > 999 and (propriedades >= 1) and (saldo >= prCompra + 10) [
-    let lista (item 0(table:values comprasTipo))
-    let c 0
-    let nLista []
-    while [c < length lista][
-      ifelse c = posicao [
-        set nLista lput (item c(lista) + 1) nLista
+  ask turtles [
+    let posicao position produto (item 0(item 0 table:to-list comprasTipo))
+    let quant item posicao(item 0(table:values comprasTipo))
+    if quant <= 0 or random-float 1000 > 999 and (propriedades >= 1) and (saldo >= prCompra + 10) [
+      let lista (item 0(table:values comprasTipo))
+      let c 0
+      let nLista []
+      while [c < length lista][
+        ifelse c = posicao [
+          set nLista lput (item c(lista) + 1) nLista
+        ][ set nLista lput (item c(lista)) nLista ]
+        set c c + 1
       ]
-      [
-        set nLista lput (item c(lista)) nLista
+      set saldo saldo - prCompra
+      table:put comprasTipo (item 0(table:keys comprasTipo)) nLista
+      ask agenteE [
+        set qEmp (qEmp - 1)
+        set saldo saldo + prCompra
+        table:put produtos produto (list qEmp prCompra)
       ]
-      set c c + 1
-    ]
-    set saldo saldo - prCompra
-    table:put comprasTipo (item 0(table:keys comprasTipo)) nLista
-    ask agenteE [
-      set qEmp (qEmp - 1)
-      set saldo saldo + prCompra
-      table:put produtos produto (list qEmp prProd prCompra)
     ]
   ]
 end
 to produzirEmp [ prod ]
-  if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
-    ask one-of empresario with [setor = "agrotoxicos"] [
-      table:put produtos prod (list (qEmp + 1) prProd prComp)
+  ask turtles [
+    if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
+      ask one-of empresario with [setor = "agrotoxicos"] [
+        table:put produtos prod (list (qEmp + 1) prComp)
+        set poluicao poluicao + 1
+        if prod = "agPremium" [
+          set poluicao poluicao + 1
+        ]
+        if prod = "agSPremium" [
+          set poluicao poluicao + 2
+        ]
+      ]
     ]
-  ]
-  if prod = "arroz" or prod = "hort" or prod = "soja"[
-    ask one-of empresario with [setor = "sementes"] [
-      table:put produtos prod (list (qEmp + 1) prProd prComp)
+    if prod = "arroz" or prod = "hort" or prod = "soja"[
+      ask one-of empresario with [setor = "sementes"] [
+        table:put produtos prod (list (qEmp + 1) prComp)
+      ]
     ]
-  ]
-  if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
-    ask one-of empresario with [setor = "fertilizantes"] [
-      table:put produtos prod (list (qEmp + 1) prProd prComp)
+    if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
+      ask one-of empresario with [setor = "fertilizantes"] [
+        table:put produtos prod (list (qEmp + 1) prComp)
+      ]
     ]
-  ]
-  if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
-    ask one-of empresario with [setor = "maquinas"] [
-      table:put produtos prod (list (qEmp + 1) prProd prComp)
+    if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
+      ask one-of empresario with [setor = "maquinas"] [
+        table:put produtos prod (list (qEmp + 1) prComp)
+      ]
     ]
   ]
 end
@@ -381,17 +389,6 @@ NIL
 NIL
 0
 
-MONITOR
-154
-304
-212
-349
-Poluição
-poluicao
-17
-1
-11
-
 SLIDER
 41
 153
@@ -451,6 +448,17 @@ num-prefeitos
 1
 NIL
 HORIZONTAL
+
+MONITOR
+151
+305
+209
+350
+Poluição
+polGeral
+10
+1
+11
 
 @#$#@#$#@
 ## O QUE É ISSO?
