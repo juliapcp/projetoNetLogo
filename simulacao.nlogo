@@ -21,7 +21,7 @@ to setup
   criarVereadores
   criarOngs
   criarPrefeitos
-  ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.3)]
+  ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.8)]
   reset-ticks
 end
 to go
@@ -30,7 +30,7 @@ to go
   adcPropriedade
   comprar
   impostoSalario
-  arredondar
+  ajustarvalores
   plantar
   somar
   display
@@ -291,13 +291,9 @@ to produzirEmp [ prod ]
     ]
   ]
 end
-to arredondar
+to ajustarvalores
   ask turtles [
     set saldo precision saldo 2
-  ]
-end
-to somar
-  ask turtles [
     set polGeral polGeral + poluicao
   ]
 end
