@@ -30,9 +30,8 @@ to go
   adcPropriedade
   comprar
   impostoSalario
-  ajustarvalores
+  ajustValores
   plantar
-  somar
   display
   tick
 end
@@ -265,33 +264,33 @@ to produzirEmp [ prod ]
   if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
     ask one-of empresario with [setor = "agrotoxicos"] [
       let pol item 2(table:get produtos prod)
-      table:put produtos prod (list (qEmp + 1) prComp)
+      table:put produtos prod (list (qEmp + 1) prComp pol)
       set poluicao poluicao + pol
     ]
   ]
   if prod = "arroz" or prod = "hort" or prod = "soja"[
     ask one-of empresario with [setor = "sementes"] [
       let pol item 2(table:get produtos prod)
-      table:put produtos prod (list (qEmp + 1) prComp)
+      table:put produtos prod (list (qEmp + 1) prComp pol)
       set poluicao poluicao + pol
     ]
   ]
   if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
     ask one-of empresario with [setor = "fertilizantes"] [
       let pol item 2(table:get produtos prod)
-      table:put produtos prod (list (qEmp + 1) prComp)
+      table:put produtos prod (list (qEmp + 1) prComp pol)
       set poluicao poluicao + pol
     ]
   ]
   if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
     ask one-of empresario with [setor = "maquinas"] [
       let pol item 2(table:get produtos prod)
-      table:put produtos prod (list (qEmp + 1) prComp)
+      table:put produtos prod (list (qEmp + 1) prComp pol)
       set poluicao poluicao + pol
     ]
   ]
 end
-to ajustarvalores
+to ajustValores
   ask turtles [
     set saldo precision saldo 2
     set polGeral polGeral + poluicao
@@ -334,22 +333,22 @@ num-fiscais
 num-fiscais
 1
 10
-4.0
+3.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-42
-81
-214
-114
+43
+79
+215
+112
 num-agricultores
 num-agricultores
 1
 10
-3.0
+5.0
 1
 1
 NIL
@@ -413,7 +412,7 @@ num-ongs
 num-ongs
 1
 10
-4.0
+2.0
 1
 1
 NIL
@@ -443,7 +442,7 @@ num-prefeitos
 num-prefeitos
 1
 2
-1.0
+2.0
 1
 1
 NIL
@@ -877,7 +876,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
