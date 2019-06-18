@@ -6,22 +6,26 @@ breed [ vereador vereadores ]
 breed [ a-ong ong ]
 breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
-globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui]
+breed [areasPol areaPol]
+breed [areasLimp areaLimp]
+globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui area poluido]
 turtles-own [ saldo taxa latifundio imposto poluicao]
 agricultor-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
 empresario-own [ setor produtos ]
+patches-own [invisible-pcolor]
 to setup
   clear-all
+  import-pcolors "mapa.jpg"
   criarAgricultores
   criarFiscais
   criarEmpresarios
   criarVereadores
   criarOngs
   criarPrefeitos
-  ask patches [ set pcolor green + (random-float 0.8) - 0.3 + (random-float 0.3) + 0.3 + (random-float 0.8)]
+  criarArea
   reset-ticks
 end
 to go
@@ -32,8 +36,24 @@ to go
   impostoSalario
   ajustValores
   plantar
+  ask areasPol
+    [ ask neighbors4 with [pcolor = green]
+        [ espPol ]
+      set breed areasLimp ]
+  ask patches with [pxcor = random-pxcor]
+    [ espPol ]
+  if polGeral >= 120 [
+    stop
+  ]
   display
   tick
+end
+to criarArea
+  set-default-shape areasPol "square"
+  set-default-shape areasLimp "square"
+  ask patches [ set pcolor green ]
+  set area count patches with [pcolor = green]
+  set poluido 0
 end
 to criarAgricultores
   set-default-shape agricultor "agricultor"
@@ -261,32 +281,34 @@ to comprarA [ produto comprasTipo prCompra ]
   ]
 end
 to produzirEmp [ prod ]
-  if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
-    ask one-of empresario with [setor = "agrotoxicos"] [
-      let pol item 2(table:get produtos prod)
-      table:put produtos prod (list (qEmp + 1) prComp pol)
-      set poluicao poluicao + pol
+  if random-float 100 > 50 [
+    if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
+      ask one-of empresario with [setor = "agrotoxicos"] [
+        let pol item 2(table:get produtos prod)
+        table:put produtos prod (list (qEmp + 1) prComp pol)
+        set poluicao poluicao + pol
+      ]
     ]
-  ]
-  if prod = "arroz" or prod = "hort" or prod = "soja"[
-    ask one-of empresario with [setor = "sementes"] [
-      let pol item 2(table:get produtos prod)
-      table:put produtos prod (list (qEmp + 1) prComp pol)
-      set poluicao poluicao + pol
+    if prod = "arroz" or prod = "hort" or prod = "soja"[
+      ask one-of empresario with [setor = "sementes"] [
+        let pol item 2(table:get produtos prod)
+        table:put produtos prod (list (qEmp + 1) prComp pol)
+        set poluicao poluicao + pol
+      ]
     ]
-  ]
-  if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
-    ask one-of empresario with [setor = "fertilizantes"] [
-      let pol item 2(table:get produtos prod)
-      table:put produtos prod (list (qEmp + 1) prComp pol)
-      set poluicao poluicao + pol
+    if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
+      ask one-of empresario with [setor = "fertilizantes"] [
+        let pol item 2(table:get produtos prod)
+        table:put produtos prod (list (qEmp + 1) prComp pol)
+        set poluicao poluicao + pol
+      ]
     ]
-  ]
-  if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
-    ask one-of empresario with [setor = "maquinas"] [
-      let pol item 2(table:get produtos prod)
-      table:put produtos prod (list (qEmp + 1) prComp pol)
-      set poluicao poluicao + pol
+    if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
+      ask one-of empresario with [setor = "maquinas"] [
+        let pol item 2(table:get produtos prod)
+        table:put produtos prod (list (qEmp + 1) prComp pol)
+        set poluicao poluicao + pol
+      ]
     ]
   ]
 end
@@ -296,15 +318,33 @@ to ajustValores
     set polGeral polGeral + poluicao
   ]
 end
+
+to espPol
+  if precision ((poluido / (area + 1)) * 100) 0 != polGeral and polGeral != 0 [
+  sprout-areasPol 1
+    [ set color red - 3 ]
+  set pcolor brown - 3
+  set poluido poluido + 1
+  ]
+  escurecerArea
+end
+
+to escurecerArea
+  ask areasLimp
+    [ set color color - 0.3
+      if color < red - 3.5
+        [ set pcolor color
+          die ] ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-227
-33
-874
-681
+228
+34
+877
+684
 -1
 -1
-9.0
+7.914
 1
 10
 1
@@ -314,10 +354,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--35
-35
--35
-35
+-40
+40
+-40
+40
 1
 1
 1
@@ -333,7 +373,7 @@ num-fiscais
 num-fiscais
 1
 10
-3.0
+7.0
 1
 1
 NIL
@@ -348,7 +388,7 @@ num-agricultores
 num-agricultores
 1
 10
-5.0
+4.0
 1
 1
 NIL
@@ -397,7 +437,7 @@ num-empresarios
 num-empresarios
 4
 8
-6.0
+4.0
 1
 1
 NIL
@@ -412,7 +452,7 @@ num-ongs
 num-ongs
 1
 10
-2.0
+3.0
 1
 1
 NIL
