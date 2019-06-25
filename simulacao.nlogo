@@ -18,7 +18,7 @@ empresario-own [ setor produtos ]
 patches-own [invisible-pcolor]
 to setup
   clear-all
-  import-pcolors "mapa.jpg"
+  ;import-pcolors "mapa.jpg"
   criarAgricultores
   criarFiscais
   criarEmpresarios
@@ -36,6 +36,9 @@ to go
   impostoSalario
   ajustValores
   plantar
+  ask patches with [pxcor > 10]
+  [ set pcolor blue
+  ]
   ask areasPol
     [ ask neighbors4 with [pcolor = green]
         [ espPol ]
@@ -144,7 +147,7 @@ to criarEmpresarios
     set setor one-of setores
     if setor = "agrotoxicos" [
       set imposto 45
-      ; produtos nome (quantidade na empresa, preço para compra)
+      ; produtos nome (quantidade na empresa, preço para compra, quantidade de poluicao)
       table:put produtos "agComum" (list 1 one-of [5 10 15] 1)
       table:put produtos "agPremium" (list 1 one-of [15 20 25] 2)
       table:put produtos "agSPremium" (list 1 one-of [25 30 35] 3)
@@ -183,8 +186,11 @@ to adcPropriedade
 end
 to moverAgentes
   ask turtles [
-    set heading (heading + 45 - (random 90))
-    fd 1
+    ;ask patch-here [
+    ;if pcolor != blue [
+      set heading (heading + 45 - (random 90))
+      fd 1
+    ;]
   ]
 end
 to plantar
@@ -236,6 +242,7 @@ to comprar
       set qEmp item 0(table:get produtos produto)
       set prComp item 1(table:get produtos produto)
       set polui item 2(table:get produtos produto)
+      print polui
       ifelse qEmp <= 0 [
         produzirEmp produto
       ] [
@@ -267,7 +274,7 @@ to comprarA [ produto comprasTipo prCompra ]
     let nLista []
     while [c < length lista][
       ifelse c = posicao [
-        set nLista lput (item c(lista) + 1) nLista
+        set nLista lput(item c(lista) + 1) nLista
       ][ set nLista lput (item c(lista)) nLista ]
       set c c + 1
     ]
@@ -388,7 +395,7 @@ num-agricultores
 num-agricultores
 1
 10
-4.0
+3.0
 1
 1
 NIL
@@ -916,7 +923,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.4
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
