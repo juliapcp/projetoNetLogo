@@ -8,7 +8,7 @@ breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
 breed [areasPol areaPol]
 breed [areasLimp areaLimp]
-globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui area poluido]
+globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui area poluido cor]
 turtles-own [ saldo taxa latifundio imposto poluicao]
 agricultor-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
 a-ong-own [ salario ]
@@ -64,6 +64,7 @@ to criarAgricultores
     set color 137
     set size 5
     setxy random-xcor random-ycor
+    ;move-to one-of patches with [ pcolor = green ]
     set hectares 100
     set agenteA self
     set comprasAgr table:make
@@ -92,6 +93,7 @@ to criarPrefeitos
     set color brown + 1
     set size 5
     setxy random-xcor random-ycor
+    ;move-to one-of patches with [ pcolor = green ]
     set saldo 1000000
   ]
 end
@@ -186,11 +188,13 @@ to adcPropriedade
 end
 to moverAgentes
   ask turtles [
-    ;ask patch-here [
-    ;if pcolor != blue [
+    ask patch-here [
+      set cor pcolor
+    ]
+    if cor != blue [
       set heading (heading + 45 - (random 90))
       fd 1
-    ;]
+    ]
   ]
 end
 to plantar
