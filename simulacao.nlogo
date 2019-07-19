@@ -18,7 +18,11 @@ empresario-own [ setor produtos ]
 patches-own [invisible-pcolor]
 to setup
   clear-all
-  ;import-pcolors "mapa.jpg"
+  ask patches [ set pcolor blue - 0.25 - random-float 0.25 ]
+  import-pcolors "map.png"
+  ask patches with [ not shade-of? blue pcolor ] [
+    set pcolor green
+  ]
   criarAgricultores
   criarFiscais
   criarEmpresarios
@@ -29,16 +33,13 @@ to setup
   reset-ticks
 end
 to go
-  moverAgentes
+  ;moverAgentes
   fiscalizar
   adcPropriedade
   comprar
   impostoSalario
   ajustValores
   plantar
-  ask patches with [pxcor > 10]
-  [ set pcolor blue
-  ]
   ask areasPol
     [ ask neighbors4 with [pcolor = green]
         [ espPol ]
@@ -54,7 +55,6 @@ end
 to criarArea
   set-default-shape areasPol "square"
   set-default-shape areasLimp "square"
-  ask patches [ set pcolor green ]
   set area count patches with [pcolor = green]
   set poluido 0
 end
@@ -64,7 +64,7 @@ to criarAgricultores
     set color 137
     set size 5
     setxy random-xcor random-ycor
-    ;move-to one-of patches with [ pcolor = green ]
+    move-to one-of patches with [ pcolor = green ]
     set hectares 100
     set agenteA self
     set comprasAgr table:make
@@ -93,8 +93,8 @@ to criarPrefeitos
     set color brown + 1
     set size 5
     setxy random-xcor random-ycor
-    ;move-to one-of patches with [ pcolor = green ]
     set saldo 1000000
+    ;move-to one-of patches with [ pcolor = green ]
   ]
 end
 to criarFiscais
@@ -106,6 +106,7 @@ to criarFiscais
     set saldo 100000
     set salario 60000
     set imposto 8
+    ;move-to one-of patches with [ pcolor = green ]
   ]
 end
 to criarVereadores
@@ -117,6 +118,7 @@ to criarVereadores
     set saldo 100000
     set salario 180000
     set imposto 8
+    ;move-to one-of patches with [ pcolor = green ]
   ]
 end
 to criarOngs
@@ -128,6 +130,7 @@ to criarOngs
     set saldo 50000
     set imposto 8
     set salario 14000
+    ;move-to one-of patches with [ pcolor = green ]
   ]
 end
 
@@ -140,6 +143,7 @@ to criarEmpresarios
     set i i + 1
   ]
   create-empresario num-empresarios [
+    ;move-to one-of patches with [ pcolor = green ]
     set color yellow + 4
     set size 5
     setxy random-xcor random-ycor
@@ -186,17 +190,19 @@ to adcPropriedade
     ]
   ]
 end
-to moverAgentes
-  ask turtles [
-    ask patch-here [
-      set cor pcolor
-    ]
-    if cor != blue [
-      set heading (heading + 45 - (random 90))
-      fd 1
-    ]
-  ]
-end
+;to moverAgentes
+;  ask turtles [
+;    let turn one-of [ -40 40 ]
+;    while [not tem-agua] [
+;      set heading heading + turn
+;    ]
+;    fd 0.7
+;  ]
+;end
+;to-report tem-agua
+;  let target patch-ahead 0.7
+;  report target != nobody and shade-of? green [pcolor] of target
+;end
 to plantar
   ask turtles [
     if random-float 50 > 49.9 [
@@ -349,13 +355,13 @@ to escurecerArea
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-228
-34
-877
-684
+224
+32
+799
+608
 -1
 -1
-7.914
+7.0
 1
 10
 1
@@ -384,7 +390,7 @@ num-fiscais
 num-fiscais
 1
 10
-7.0
+6.0
 1
 1
 NIL
@@ -463,7 +469,7 @@ num-ongs
 num-ongs
 1
 10
-3.0
+1.0
 1
 1
 NIL
@@ -478,7 +484,7 @@ num-vereadores
 num-vereadores
 1
 10
-2.0
+1.0
 1
 1
 NIL
@@ -927,7 +933,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
