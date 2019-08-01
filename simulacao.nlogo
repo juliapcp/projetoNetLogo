@@ -30,10 +30,13 @@ to setup
   criarOngs
   criarPrefeitos
   criarArea
+  ask turtles [
+    move-to one-of patches with [ pcolor = green ]
+  ]
   reset-ticks
 end
 to go
-  ;moverAgentes
+  moverAgentes
   fiscalizar
   adcPropriedade
   comprar
@@ -64,7 +67,6 @@ to criarAgricultores
     set color 137
     set size 5
     setxy random-xcor random-ycor
-    move-to one-of patches with [ pcolor = green ]
     set hectares 100
     set agenteA self
     set comprasAgr table:make
@@ -190,19 +192,26 @@ to adcPropriedade
     ]
   ]
 end
-;to moverAgentes
-;  ask turtles [
-;    let turn one-of [ -40 40 ]
-;    while [not tem-agua] [
-;      set heading heading + turn
-;    ]
-;    fd 0.7
-;  ]
-;end
-;to-report tem-agua
-;  let target patch-ahead 0.7
-;  report target != nobody and shade-of? green [pcolor] of target
-;end
+to moverAgentes
+  ask turtles [
+    right random 30
+    left random 30
+  ; avoid moving into the ocean or outside the world by turning
+  ; left (-10) or right (10) until the patch ahead is not an ocean patch
+    let turn one-of [ -10 10 ]
+    while [ not tem-terra ] [
+      set heading heading + turn
+      if tempo = 40 [
+        stop
+      ]
+    ]
+    fd 0.7
+  ]
+end
+to-report tem-terra
+  let target patch-ahead 0.7
+  report target != nobody and shade-of? green [pcolor] of target
+end
 to plantar
   ask turtles [
     if random-float 50 > 49.9 [
@@ -412,27 +421,10 @@ NIL
 HORIZONTAL
 
 BUTTON
-43
-33
-124
-73
-Config,
-setup
-NIL
-1
-T
-OBSERVER
-NIL
-C
-NIL
-NIL
-1
-
-BUTTON
 141
 32
 209
-74
+71
 Ir
 go
 T
@@ -515,6 +507,23 @@ polGeral
 10
 1
 11
+
+BUTTON
+45
+32
+119
+72
+Config.
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+C
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## O QUE É ISSO?
@@ -933,7 +942,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.4
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
