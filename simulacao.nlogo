@@ -96,7 +96,7 @@ to criarPrefeitos
     set size 5
     setxy random-xcor random-ycor
     set saldo 1000000
-    ;move-to one-of patches with [ pcolor = green ]
+
   ]
 end
 to criarFiscais
@@ -108,7 +108,6 @@ to criarFiscais
     set saldo 100000
     set salario 60000
     set imposto 8
-    ;move-to one-of patches with [ pcolor = green ]
   ]
 end
 to criarVereadores
@@ -120,7 +119,7 @@ to criarVereadores
     set saldo 100000
     set salario 180000
     set imposto 8
-    ;move-to one-of patches with [ pcolor = green ]
+
   ]
 end
 to criarOngs
@@ -132,7 +131,7 @@ to criarOngs
     set saldo 50000
     set imposto 8
     set salario 14000
-    ;move-to one-of patches with [ pcolor = green ]
+
   ]
 end
 
@@ -145,7 +144,6 @@ to criarEmpresarios
     set i i + 1
   ]
   create-empresario num-empresarios [
-    ;move-to one-of patches with [ pcolor = green ]
     set color yellow + 4
     set size 5
     setxy random-xcor random-ycor
@@ -196,16 +194,11 @@ to moverAgentes
   ask turtles [
     right random 30
     left random 30
-  ; avoid moving into the ocean or outside the world by turning
-  ; left (-10) or right (10) until the patch ahead is not an ocean patch
     let turn one-of [ -10 10 ]
     while [ not tem-terra ] [
       set heading heading + turn
-      if tempo = 40 [
-        stop
-      ]
+       fd 0.7
     ]
-    fd 0.7
   ]
 end
 to-report tem-terra
