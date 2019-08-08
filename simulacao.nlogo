@@ -30,9 +30,6 @@ to setup
   criarOngs
   criarPrefeitos
   criarArea
-  ask turtles [
-    move-to one-of patches with [ pcolor = green ]
-  ]
   reset-ticks
 end
 to go
@@ -66,7 +63,8 @@ to criarAgricultores
   create-agricultor num-agricultores [
     set color 137
     set size 5
-    setxy random-xcor random-ycor
+    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
+    set heading -5 + random 10 ; generally head east
     set hectares 100
     set agenteA self
     set comprasAgr table:make
@@ -94,7 +92,7 @@ to criarPrefeitos
   create-prefeito num-prefeitos [
     set color brown + 1
     set size 5
-    setxy random-xcor random-ycor
+     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]     set heading -5 + random 10 ; generally head east
     set saldo 1000000
 
   ]
@@ -104,7 +102,7 @@ to criarFiscais
   create-fiscal num-fiscais [
     set color brown
     set size 5
-    setxy random-xcor random-ycor
+     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]     set heading -5 + random 10 ; generally head east
     set saldo 100000
     set salario 60000
     set imposto 8
@@ -115,7 +113,8 @@ to criarVereadores
   create-vereador num-vereadores [
     set color pink + 3.2
     set size 5
-    setxy random-xcor random-ycor
+     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
+    set heading -5 + random 10 ; generally head east
     set saldo 100000
     set salario 180000
     set imposto 8
@@ -127,7 +126,8 @@ to criarOngs
   create-a-ong num-ongs [
     set color brown + 3
     set size 5
-    setxy random-xcor random-ycor
+     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
+    set heading -5 + random 10 ; generally head east
     set saldo 50000
     set imposto 8
     set salario 14000
@@ -146,7 +146,8 @@ to criarEmpresarios
   create-empresario num-empresarios [
     set color yellow + 4
     set size 5
-    setxy random-xcor random-ycor
+     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
+    set heading -5 + random 10 ; generally head east
     set saldo 700000
     set latifundio 6500000
     set produtos table:make
@@ -192,17 +193,18 @@ to adcPropriedade
 end
 to moverAgentes
   ask turtles [
-    right random 30
-    left random 30
+    right random 5
+    left random 5
     let turn one-of [ -10 10 ]
+    print tem-terra
     while [ not tem-terra ] [
       set heading heading + turn
-       fd 0.7
+      fd 0.3
     ]
   ]
 end
 to-report tem-terra
-  let target patch-ahead 0.7
+  let target patch-ahead 0.3
   report target != nobody and shade-of? green [pcolor] of target
 end
 to plantar
