@@ -42,11 +42,15 @@ to go
   plantar
   ask areasPol
     [ ask neighbors4 with [pcolor = green]
-        [ espPol ]
+      [ espPol ]
       set breed areasLimp ]
   ask patches with [pxcor = random-pxcor]
     [ espPol ]
   if polGeral >= 120 [
+    ask patches with [pcolor = green ]
+    [
+      set pcolor red - 3.5
+    ]
     stop
   ]
   display
@@ -63,8 +67,8 @@ to criarAgricultores
   create-agricultor num-agricultores [
     set color 137
     set size 5
-    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
-    set heading -5 + random 10 ; generally head east
+    move-to one-of patches with [ pcolor = green ]
+    set heading -5 + random 10
     set hectares 100
     set agenteA self
     set comprasAgr table:make
@@ -92,7 +96,7 @@ to criarPrefeitos
   create-prefeito num-prefeitos [
     set color brown + 1
     set size 5
-     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]     set heading -5 + random 10 ; generally head east
+    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]     set heading -5 + random 10 ; generally head east
     set saldo 1000000
 
   ]
@@ -102,7 +106,7 @@ to criarFiscais
   create-fiscal num-fiscais [
     set color brown
     set size 5
-     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]     set heading -5 + random 10 ; generally head east
+    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]     set heading -5 + random 10 ; generally head east
     set saldo 100000
     set salario 60000
     set imposto 8
@@ -113,7 +117,7 @@ to criarVereadores
   create-vereador num-vereadores [
     set color pink + 3.2
     set size 5
-     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
+    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
     set heading -5 + random 10 ; generally head east
     set saldo 100000
     set salario 180000
@@ -126,7 +130,7 @@ to criarOngs
   create-a-ong num-ongs [
     set color brown + 3
     set size 5
-     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
+    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
     set heading -5 + random 10 ; generally head east
     set saldo 50000
     set imposto 8
@@ -146,7 +150,7 @@ to criarEmpresarios
   create-empresario num-empresarios [
     set color yellow + 4
     set size 5
-     move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
+    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
     set heading -5 + random 10 ; generally head east
     set saldo 700000
     set latifundio 6500000
@@ -192,34 +196,40 @@ to adcPropriedade
   ]
 end
 to moverAgentes
-  ask turtles [
-    right random 5
-    left random 5
+  ask turtles with [shape != "square"] [
+    right random 30
+    left random 30
     let turn one-of [ -10 10 ]
-    print tem-terra
-    while [ not tem-terra ] [
-      set heading heading + turn
-      fd 0.3
+    set heading heading + turn
+    ifelse shade-of? blue [pcolor] of patch-ahead 0.4 [
+      rt 10
+      fd 0.2
+    ][fd 0.3]
+    if  shade-of? blue [pcolor] of patch-here [
+      ask patch-here [
+        if shade-of? green [pcolor] of one-of neighbors [
+          let vizinhoverde one-of neighbors with [pcolor = green]
+          ask turtles-here [
+            move-to vizinhoverde
+          ]
+        ]
+      ]
     ]
   ]
-end
-to-report tem-terra
-  let target patch-ahead 0.3
-  report target != nobody and shade-of? green [pcolor] of target
 end
 to plantar
   ask turtles [
     if random-float 50 > 49.9 [
       let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
       let tempo ticks
-      ;if table:has-key? compras  = true [
+      ;if table:has-key? compras = true [
       ;]
     ]
   ]
 end
 to fiscalizar
   ask turtles [
-    if poluicao > 99 [  ; FIXME
+    if poluicao > 99 [
       ask agricultor [
         let distancia self
         ask fiscal with [distance distancia < 5] [
@@ -256,7 +266,6 @@ to comprar
       set qEmp item 0(table:get produtos produto)
       set prComp item 1(table:get produtos produto)
       set polui item 2(table:get produtos produto)
-      print polui
       ifelse qEmp <= 0 [
         produzirEmp produto
       ] [
@@ -342,10 +351,10 @@ end
 
 to espPol
   if precision ((poluido / (area + 1)) * 100) 0 != polGeral and polGeral != 0 [
-  sprout-areasPol 1
+    sprout-areasPol 1
     [ set color red - 3 ]
-  set pcolor brown - 3
-  set poluido poluido + 1
+    set pcolor brown - 3
+    set poluido poluido + 1
   ]
   escurecerArea
 end
@@ -937,7 +946,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
