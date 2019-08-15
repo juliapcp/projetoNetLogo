@@ -1,3 +1,4 @@
-# projetoNetLogo
+#Simulação social utilizando a ferramenta multiagentes NetLogo
 Os sistemas multiagentes (SMA) baseiam-se em agentes interagindo em um mesmo ambiente, de forma que cada um tem comportamento autônomo, isto é, existem de maneira interdependente, assumindo papéis fundamentais na resolução de um problema, visto suas diferentes maneiras de abordar uma situação de forma cooperativa.
-Sendo assim, o SMA é uma ferramenta eficiente em tomadas de decisão em situações reais, visto sua alta precisão de dados. O presente projeto
+Sendo assim, o SMA é uma ferramenta eficiente em tomadas de decisão em situações reais, visto sua alta precisão de dados, usufruindo desse aspecto do SMA, o presente projeto utiliza a linguagem de programação NetLogo, atuamte em um sistema integrado multiagente para simular uma situação social modelada que envolve a gestão participativa de recursos hídricos.
+A simulação consiste em fazer com que agentes que atuam como agricultores, empresários, prefeitos, vereadores, ongs,
