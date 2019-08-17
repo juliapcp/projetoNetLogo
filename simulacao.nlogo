@@ -8,28 +8,29 @@ breed [ prefeito prefeitos ]
 breed [ endpatches endpatch ]
 breed [areasPol areaPol]
 breed [areasLimp areaLimp]
+breed [pontes ponte]
+breed [casas casa]
+breed [cercas cerca]
+breed [empresas empresa]
+breed [prefeituras prefeitura]
 globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui area poluido cor]
-turtles-own [ saldo taxa latifundio imposto poluicao]
+turtles-own [ saldo taxa latifundio imposto poluicao fixo?]
+casas-own [donos]
 agricultor-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
 a-ong-own [ salario ]
 vereador-own [ salario ]
 fiscal-own [ salario ]
 empresario-own [ setor produtos ]
-patches-own [invisible-pcolor]
+patches-own [invisible-pcolor dono]
 to setup
   clear-all
-  ask patches [ set pcolor blue - 0.25 - random-float 0.25 ]
-  import-pcolors "map.png"
-  ask patches with [ not shade-of? blue pcolor ] [
-    set pcolor green
-  ]
+  criarArea
   criarAgricultores
   criarFiscais
   criarEmpresarios
   criarVereadores
   criarOngs
   criarPrefeitos
-  criarArea
   reset-ticks
 end
 to go
@@ -40,38 +41,156 @@ to go
   impostoSalario
   ajustValores
   plantar
-  ask areasPol
-    [ ask neighbors4 with [pcolor = green]
-      [ espPol ]
-      set breed areasLimp ]
-  ask patches with [pxcor = random-pxcor]
-    [ espPol ]
-  if polGeral >= 120 [
-    ask patches with [pcolor = green ]
-    [
-      set pcolor red - 3.5
-    ]
-    stop
-  ]
-  display
+;  ask areasPol
+;    [ ask neighbors4 with [pcolor = green]
+;      [ espPol ]
+;      set breed areasLimp ]
+;  ask patches with [pxcor = random-pxcor]
+;    [ espPol ]
+;  if polGeral >= 120 [
+;    ask patches with [pcolor = green ]
+;    [
+;      set pcolor red - 3.5
+;    ]
+;    stop
+;  ]
+;  display
   tick
 end
 to criarArea
-  set-default-shape areasPol "square"
-  set-default-shape areasLimp "square"
-  set area count patches with [pcolor = green]
-  set poluido 0
+  ask patches [ set pcolor green - 0.25 - random-float 0.25 ]
+  ask patches with [(pycor > 0 and pycor < 16 and pxcor < 24)] [
+    set pcolor blue;
+  ]
+  ask patches with [(pxcor > 10 and pxcor < 24)] [
+    set pcolor blue;
+  ]
+  set-default-shape cercas "square 2"
+  create-cercas 1 [
+    set size 18
+    setxy -30 27
+  ]
+  set-default-shape cercas "square 2"
+  create-cercas 1 [
+    set size 18
+    setxy -31 -27
+  ]
+  set-default-shape cercas "square 2"
+  create-cercas 1 [
+    set size 18
+    setxy -2 -31
+  ]
+  set-default-shape pontes "tile stones"
+  create-pontes 1 [
+    set color grey
+    set size 5
+    setxy -15 2
+  ]
+  create-pontes 1 [
+    set color grey
+    set size 5
+    setxy -15 6
+  ]
+  create-pontes 1 [
+    set color grey
+    set size 5
+    setxy -15 10
+  ]
+  create-pontes 1 [
+    set color grey
+    set size 5
+    setxy -15 14
+  ]
+  create-pontes 1 [
+    set color grey
+    set size 5
+    setxy 12 30
+  ]
+  create-pontes 1 [
+    set color grey
+    set size 5
+    setxy 17 30
+  ]
+  create-pontes 1 [
+    set color grey
+    set size 5
+    setxy 22 30
+  ]
+  create-pontes 1 [
+    set color grey
+    set size 5
+    setxy -15 14
+  ]
+  ask pontes [
+    ask patch-here [
+      ask neighbors [
+        set pcolor red - 3
+        ask neighbors [
+          set pcolor red - 3
+        ]
+      ]
+      set pcolor red - 3
+    ]
+  ]
+  create-casas 1 [
+    set shape "casadupla"
+    set color one-of [yellow orange red magenta pink gray]
+    set size 14
+    setxy -30 -17
+  ]
+  create-casas 1 [
+    set shape "casasimples"
+    set color one-of [yellow blue red magenta pink gray]
+    set size 14
+    setxy -1 -21
+  ]
+  create-casas 1 [
+    set shape "casa"
+    set color one-of [yellow blue red magenta pink gray]
+    set size 12
+    setxy -30 37
+  ]
+  set-default-shape empresas "factory"
+  create-empresas 1 [
+    set color one-of [white brown]
+    set size 18
+    setxy 34 25
+  ]
+  create-empresas 1 [
+    set color one-of [white brown]
+    set size 18
+    setxy 39 35
+  ]
+  create-prefeituras 1 [
+    set shape "prefeitura"
+    set color one-of [white gray]
+    set size 18
+    setxy -4 33
+  ]
+;  set-default-shape areasPol "square"
+;  set-default-shape areasLimp "square"
+;  set area count patches with [pcolor = green]
+;  set poluido 0
+  ask patches with [(pxcor > -39 and pxcor < -23) and (pycor > -35 and pycor < -20)] [
+   set dono "(agricultores 17)"
+  ]
+  ask patches with [(pxcor > -10 and pxcor < 6) and (pycor > -39 and pycor < -24)] [
+    set dono "(agricultores 18)"
+  ]
+  ask patches with [(pxcor > -38 and pxcor < -22) and (pycor > 19 and pycor < 34)] [
+    set dono "(agricultores 19)"
+  ]
 end
 to criarAgricultores
   set-default-shape agricultor "agricultor"
   create-agricultor num-agricultores [
     set color 137
     set size 5
-    move-to one-of patches with [ pcolor = green ]
-    set heading -5 + random 10
+    set fixo? false
     set hectares 100
     set agenteA self
     set comprasAgr table:make
+    move-to one-of patches with [dono = (word "" agenteA)]
     table:put comprasAgr (list "agComum" "agPremium" "agSPremium") (list 0 0 0 )
     set comprasFer table:make
     table:put comprasFer (list "FComum" "FPremium" "FSPremium" ) (list 0 0 0)
@@ -96,9 +215,9 @@ to criarPrefeitos
   create-prefeito num-prefeitos [
     set color brown + 1
     set size 5
-    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]     set heading -5 + random 10 ; generally head east
+    set fixo? true
     set saldo 1000000
-
+    setxy one-of [-1 -2 -5] one-of [ 23 22 21 ]
   ]
 end
 to criarFiscais
@@ -106,7 +225,7 @@ to criarFiscais
   create-fiscal num-fiscais [
     set color brown
     set size 5
-    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]     set heading -5 + random 10 ; generally head east
+    set fixo? false
     set saldo 100000
     set salario 60000
     set imposto 8
@@ -117,12 +236,11 @@ to criarVereadores
   create-vereador num-vereadores [
     set color pink + 3.2
     set size 5
-    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
-    set heading -5 + random 10 ; generally head east
+    setxy one-of [-5 -7 -3 -9] one-of [23 22 21]
     set saldo 100000
     set salario 180000
     set imposto 8
-
+    set fixo? true
   ]
 end
 to criarOngs
@@ -130,12 +248,11 @@ to criarOngs
   create-a-ong num-ongs [
     set color brown + 3
     set size 5
-    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
-    set heading -5 + random 10 ; generally head east
+    set fixo? false
+
     set saldo 50000
     set imposto 8
     set salario 14000
-
   ]
 end
 
@@ -150,12 +267,12 @@ to criarEmpresarios
   create-empresario num-empresarios [
     set color yellow + 4
     set size 5
-    move-to one-of patches with [ pcolor = green and pxcor <= 10 ]
-    set heading -5 + random 10 ; generally head east
+    set fixo? false
     set saldo 700000
     set latifundio 6500000
     set produtos table:make
     set setor one-of setores
+    setxy xaleatorio random-pycor
     if setor = "agrotoxicos" [
       set imposto 45
       ; produtos nome (quantidade na empresa, preço para compra, quantidade de poluicao)
@@ -188,6 +305,12 @@ to criarEmpresarios
     ]
   ]
 end
+to-report xaleatorio
+  loop [
+      let x random-pxcor
+      if ( x > 24 ) [ report x ]
+    ]
+end
 to adcPropriedade
   if random-float 100 > 70 [
     ask agricultor with [propriedades = 0] [
@@ -196,24 +319,30 @@ to adcPropriedade
   ]
 end
 to moverAgentes
-  ask turtles with [shape != "square"] [
+  ask turtles with [fixo? = false] [
     right random 30
     left random 30
     let turn one-of [ -10 10 ]
     set heading heading + turn
-    ifelse shade-of? blue [pcolor] of patch-ahead 0.4 [
-      rt 10
-      fd 0.2
-    ][fd 0.3]
-    if  shade-of? blue [pcolor] of patch-here [
-      ask patch-here [
-        if shade-of? green [pcolor] of one-of neighbors [
-          let vizinhoverde one-of neighbors with [pcolor = green]
-          ask turtles-here [
-            move-to vizinhoverde
+    ifelse patch-ahead 0.5 != nobody [
+      ifelse shade-of? blue [pcolor] of patch-ahead 0.4 [
+        rt 10
+        fd 0.2
+      ][fd 0.3]
+      if shade-of? blue [pcolor] of patch-here [
+        ask patch-here [
+          if shade-of? green [pcolor] of one-of neighbors [
+            let vizinhoverde one-of neighbors with [pcolor != blue]
+            ask turtles-here [
+              move-to vizinhoverde
+            ]
           ]
         ]
       ]
+    ]
+    [
+      set heading heading + random 10
+      fd random-float 1.0
     ]
   ]
 end
@@ -349,40 +478,40 @@ to ajustValores
   ]
 end
 
-to espPol
-  if precision ((poluido / (area + 1)) * 100) 0 != polGeral and polGeral != 0 [
-    sprout-areasPol 1
-    [ set color red - 3 ]
-    set pcolor brown - 3
-    set poluido poluido + 1
-  ]
-  escurecerArea
-end
-
-to escurecerArea
-  ask areasLimp
-    [ set color color - 0.3
-      if color < red - 3.5
-        [ set pcolor color
-          die ] ]
-end
+;to espPol
+;  if precision ((poluido / (area + 1)) * 100) 0 != polGeral and polGeral != 0 [
+;    sprout-areasPol 1
+;    [ set color red - 3 ]
+;    set pcolor brown - 3
+;    set poluido poluido + 1
+;  ]
+;  escurecerArea
+;end
+;
+;to escurecerArea
+;  ask areasLimp
+;    [ set color color - 0.3
+;      if color < red - 3.5
+;        [ set pcolor color
+;          die ] ]
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
 224
 32
-799
-608
+880
+689
 -1
 -1
-7.0
+8.0
 1
 10
 1
 1
 1
 0
-1
-1
+0
+0
 1
 -40
 40
@@ -480,7 +609,7 @@ num-vereadores
 num-vereadores
 1
 10
-1.0
+4.0
 1
 1
 NIL
@@ -531,13 +660,16 @@ NIL
 
 @#$#@#$#@
 ## O QUE É ISSO?
-
+   Os sistemas multiagentes (SMA) baseiam-se em softwares desenvolvidos com agentes interagindo em um mesmo ambiente, de forma que cada um tem comportamento autônomo, isto é, existem de maneira interdependente, assumindo papéis fundamentais na resolução de um problema, visto suas diferentes maneiras de abordar uma situação de forma cooperativa. Sendo assim, o SMA é uma abordagem eficiente em tomadas de decisão em situações reais, devido à sua alta precisão de dados. Usufruindo desse aspecto do SMA, o presente trabalho utiliza a linguagem de programação NetLogo, atuante em um sistema integrado multiagente, para simular uma situação social modelada que envolve a gestão participativa de recursos hídricos. 
 ## COMO ISSO FUNCIONA?
 
+A simulação consiste em fazer com que agentes que atuam como agricultores e empresários, prefeitos, vereadores, membros de ONGs e fiscais ambientais, façam a gestão de suas interações interpessoais e econômicas em prol de um uso e distribuição mais eficientes da água, um bem tão importante nesse cenário.
+Os agentes atuantes como agricultores e empresários têm o papel de explorar a área de atuação visando sucesso financeiro, de modo que suas relações entre si e com o meio ambiente envolvem a produção e uso de artefatos auxiliares a plantações como agrotóxicos e maquinários, trazendo, assim, uma maior quantidade de movimentação financeira e de poluição ao ambiente. Para a fiscalização e punição pelo uso exacerbado de insumos danosos e poluentes provenientes das ações destes agentes, precisa-se da constante vigília de membros de ONGs e fiscais, importantes para aplicar multas e denúncias pela poluição elevada. Atuam, então, os agentes que utilizam essas denúncias para promulgar políticas e leis que reduzem a poluição, os prefeitos e vereadores. Estes estão encarregados de estabelecer quais são os níveis recomendados de poluição, mediando essa taxa sem comprometer as relações de produção, importantes para a renda do cenário o qual gerem.
 
 ## COMO USAR?
 
 ## COISAS PARA PERCEBER
+ Simular estas relações sociais interpessoais em um cenário modelado por meio de sistemas multiagente tem se mostrado de uma eficácia elevada para o entendimento de diversos problemas socio-ambientais como o apresentado, buscando um maior aperfeiçoamento no entendimento e previsão de aspectos da sociedade por meio destes sistemas computacionais.
 
 ## ENTENDENDO A SIMULAÇÃO
 
@@ -609,6 +741,50 @@ Polygon -16777216 true false 162 80 132 78 134 135 209 135 194 105 189 96 180 89
 Circle -7500403 true true 47 195 58
 Circle -7500403 true true 195 195 58
 
+casa
+false
+0
+Rectangle -7500403 true true 15 165 285 255
+Rectangle -1 true false 120 195 180 255
+Line -7500403 true 150 195 150 255
+Rectangle -13791810 true false 30 180 105 240
+Rectangle -13791810 true false 195 180 270 240
+Line -16777216 false 0 165 300 165
+Polygon -16777216 true false 0 165 150 90 150 120 150 90 210 120 300 165
+
+casadupla
+false
+0
+Polygon -6459832 true false 2 180 227 180 152 150 32 150
+Rectangle -7500403 true true 75 135 270 255
+Rectangle -6459832 true false 124 195 187 256
+Rectangle -11221820 true false 210 195 255 240
+Rectangle -11221820 true false 90 150 135 180
+Rectangle -11221820 true false 150 150 195 180
+Rectangle -7500403 true true 15 180 75 255
+Polygon -6459832 true false 60 135 285 135 240 90 105 90
+Line -6459832 false 75 135 75 180
+Rectangle -11221820 true false 30 195 93 240
+Line -6459832 false 60 135 285 135
+Line -6459832 false 0 180 75 180
+Line -7500403 true 60 195 60 240
+Line -7500403 true 154 195 154 255
+Rectangle -11221820 true false 210 150 255 180
+
+casasimples
+false
+0
+Rectangle -6459832 true false 255 120 270 255
+Rectangle -7500403 true true 15 180 270 255
+Polygon -955883 true false 0 180 300 180 240 135 60 135 0 180
+Rectangle -1 true false 120 195 180 255
+Line -7500403 true 150 195 150 255
+Rectangle -11221820 true false 45 195 105 240
+Rectangle -11221820 true false 195 195 255 240
+Line -7500403 true 75 195 75 240
+Line -7500403 true 225 195 225 240
+Line -955883 false 0 180 300 180
+
 circle
 false
 0
@@ -619,6 +795,21 @@ false
 0
 Circle -7500403 true true 0 0 300
 Circle -16777216 true false 30 30 240
+
+container
+false
+0
+Line -16777216 false 0 210 300 210
+Line -16777216 false 0 90 300 90
+Line -16777216 false 150 90 150 210
+Line -16777216 false 120 90 120 210
+Line -16777216 false 90 90 90 210
+Line -16777216 false 240 90 240 210
+Line -16777216 false 270 90 270 210
+Line -16777216 false 30 90 30 210
+Line -16777216 false 60 90 60 210
+Line -16777216 false 210 90 210 210
+Line -16777216 false 180 90 180 210
 
 cow
 false
@@ -673,6 +864,28 @@ Circle -7500403 true true 8 8 285
 Circle -16777216 true false 60 75 60
 Circle -16777216 true false 180 75 60
 Polygon -16777216 true false 150 168 90 184 62 210 47 232 67 244 90 220 109 205 150 198 192 205 210 220 227 242 251 229 236 206 212 183
+
+factory
+false
+15
+Rectangle -7500403 true false 75 150 285 270
+Rectangle -7500403 true false 30 120 59 231
+Rectangle -11221820 true false 90 210 270 240
+Line -7500403 false 90 195 90 255
+Line -7500403 false 90 225 270 225
+Circle -1 true true 22 103 32
+Circle -1 true true 25 68 54
+Circle -1 true true 51 51 42
+Circle -1 true true 75 70 32
+Circle -1 true true 69 34 42
+Rectangle -7500403 true false 14 228 78 270
+Rectangle -11221820 true false 90 165 270 195
+Line -7500403 false 90 180 270 180
+Line -7500403 false 120 150 120 255
+Line -7500403 false 150 150 150 240
+Line -7500403 false 180 150 180 255
+Line -7500403 false 210 150 210 240
+Line -7500403 false 240 165 240 240
 
 fiscal
 false
@@ -817,6 +1030,35 @@ Polygon -13791810 true false 105 285 135 285 150 225 165 285 210 285 150 225 90 
 Polygon -13791810 true false 105 270 120 195 150 225 105 285
 Polygon -13791810 true false 195 285 180 180 135 210 195 270
 
+prefeitura
+false
+0
+Rectangle -7500403 true true 0 60 300 270
+Rectangle -16777216 true false 130 196 168 256
+Polygon -7500403 true true 0 60 150 15 300 60
+Circle -1 true false 135 26 30
+Rectangle -16777216 false false 0 60 300 75
+Rectangle -16777216 false false 218 75 255 90
+Rectangle -16777216 false false 218 240 255 255
+Rectangle -16777216 false false 224 90 249 240
+Rectangle -16777216 false false 45 75 82 90
+Rectangle -16777216 false false 45 240 82 255
+Rectangle -16777216 false false 51 90 76 240
+Rectangle -16777216 false false 90 240 127 255
+Rectangle -16777216 false false 90 75 127 90
+Rectangle -16777216 false false 96 90 121 240
+Rectangle -16777216 false false 179 90 204 240
+Rectangle -16777216 false false 173 75 210 90
+Rectangle -16777216 false false 173 240 210 255
+Rectangle -16777216 false false 269 90 294 240
+Rectangle -16777216 false false 263 75 300 90
+Rectangle -16777216 false false 263 240 300 255
+Rectangle -16777216 false false 0 240 37 255
+Rectangle -16777216 false false 6 90 31 240
+Rectangle -16777216 false false 0 75 37 90
+Line -16777216 false 112 260 184 260
+Line -16777216 false 105 265 196 265
+
 sheep
 false
 15
@@ -841,8 +1083,11 @@ Rectangle -7500403 true true 30 30 270 270
 square 2
 false
 0
-Rectangle -7500403 true true 30 30 270 270
-Rectangle -16777216 true false 60 60 240 240
+Rectangle -6459832 true false 15 30 30 285
+Rectangle -6459832 true false 270 30 285 285
+Rectangle -6459832 true false 30 270 270 285
+Rectangle -6459832 true false 15 30 45 45
+Rectangle -6459832 true false 255 30 285 45
 
 star
 false
@@ -857,6 +1102,64 @@ Circle -16777216 true false 30 30 240
 Circle -7500403 true true 60 60 180
 Circle -16777216 true false 90 90 120
 Circle -7500403 true true 120 120 60
+
+tile log
+false
+0
+Rectangle -7500403 true true 0 0 300 300
+Line -16777216 false 0 30 45 15
+Line -16777216 false 45 15 120 30
+Line -16777216 false 120 30 180 45
+Line -16777216 false 180 45 225 45
+Line -16777216 false 225 45 165 60
+Line -16777216 false 165 60 120 75
+Line -16777216 false 120 75 30 60
+Line -16777216 false 30 60 0 60
+Line -16777216 false 300 30 270 45
+Line -16777216 false 270 45 255 60
+Line -16777216 false 255 60 300 60
+Polygon -16777216 false false 15 120 90 90 136 95 210 75 270 90 300 120 270 150 195 165 150 150 60 150 30 135
+Polygon -16777216 false false 63 134 166 135 230 142 270 120 210 105 116 120 88 122
+Polygon -16777216 false false 22 45 84 53 144 49 50 31
+Line -16777216 false 0 180 15 180
+Line -16777216 false 15 180 105 195
+Line -16777216 false 105 195 180 195
+Line -16777216 false 225 210 165 225
+Line -16777216 false 165 225 60 225
+Line -16777216 false 60 225 0 210
+Line -16777216 false 300 180 264 191
+Line -16777216 false 255 225 300 210
+Line -16777216 false 16 196 116 211
+Line -16777216 false 180 300 105 285
+Line -16777216 false 135 255 240 240
+Line -16777216 false 240 240 300 255
+Line -16777216 false 135 255 105 285
+Line -16777216 false 180 0 240 15
+Line -16777216 false 240 15 300 0
+Line -16777216 false 0 300 45 285
+Line -16777216 false 45 285 45 270
+Line -16777216 false 45 270 0 255
+Polygon -16777216 false false 150 270 225 300 300 285 228 264
+Line -16777216 false 223 209 255 225
+Line -16777216 false 179 196 227 183
+Line -16777216 false 228 183 266 192
+
+tile stones
+false
+0
+Polygon -7500403 true true 0 240 45 195 75 180 90 165 90 135 45 120 0 135
+Polygon -7500403 true true 300 240 285 210 270 180 270 150 300 135 300 225
+Polygon -7500403 true true 225 300 240 270 270 255 285 255 300 285 300 300
+Polygon -7500403 true true 0 285 30 300 0 300
+Polygon -7500403 true true 225 0 210 15 210 30 255 60 285 45 300 30 300 0
+Polygon -7500403 true true 0 30 30 0 0 0
+Polygon -7500403 true true 15 30 75 0 180 0 195 30 225 60 210 90 135 60 45 60
+Polygon -7500403 true true 0 105 30 105 75 120 105 105 90 75 45 75 0 60
+Polygon -7500403 true true 300 60 240 75 255 105 285 120 300 105
+Polygon -7500403 true true 120 75 120 105 105 135 105 165 165 150 240 150 255 135 240 105 210 105 180 90 150 75
+Polygon -7500403 true true 75 300 135 285 195 300
+Polygon -7500403 true true 30 285 75 285 120 270 150 270 150 210 90 195 60 210 15 255
+Polygon -7500403 true true 180 285 240 255 255 225 255 195 240 165 195 165 150 165 135 195 165 210 165 255
 
 tree
 false
