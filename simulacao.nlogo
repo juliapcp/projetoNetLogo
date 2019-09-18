@@ -1,10 +1,10 @@
 extensions [table]
-breed [ fiscal fiscais ]
-breed [ agricultor agricultores ]
-breed [ empresario empresarios ]
-breed [ vereador vereadores ]
-breed [ a-ong ong ]
-breed [ prefeito prefeitos ]
+breed [ fiscais fiscal ]
+breed [ agricultores agricultor ]
+breed [ empresarios empresario ]
+breed [ vereadores vereador]
+breed [ ongs ong ]
+breed [ prefeitos prefeito ]
 breed [ endpatches endpatch ]
 breed [areasPol areaPol]
 breed [areasLimp areaLimp]
@@ -16,11 +16,11 @@ breed [prefeituras prefeitura]
 globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui area poluido cor]
 turtles-own [ saldo taxa latifundio imposto poluicao fixo?]
 casas-own [donos]
-agricultor-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
-a-ong-own [ salario ]
-vereador-own [ salario ]
-fiscal-own [ salario ]
-empresario-own [ setor produtos ]
+agricultores-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
+ongs-own [ salario ]
+vereadores-own [ salario ]
+fiscais-own [ salario ]
+empresarios-own [ setor produtos ]
 patches-own [invisible-pcolor dono]
 to setup
   clear-all
@@ -36,25 +36,24 @@ end
 to go
   moverAgentes
   fiscalizar
-  adcPropriedade
   comprar
   impostoSalario
   ajustValores
   plantar
-;  ask areasPol
-;    [ ask neighbors4 with [pcolor = green]
-;      [ espPol ]
-;      set breed areasLimp ]
-;  ask patches with [pxcor = random-pxcor]
-;    [ espPol ]
-;  if polGeral >= 120 [
-;    ask patches with [pcolor = green ]
-;    [
-;      set pcolor red - 3.5
-;    ]
-;    stop
-;  ]
-;  display
+  ;  ask areasPol
+  ;    [ ask neighbors4 with [pcolor = green]
+  ;      [ espPol ]
+  ;      set breed areasLimp ]
+  ;  ask patches with [pxcor = random-pxcor]
+  ;    [ espPol ]
+  ;  if polGeral >= 120 [
+  ;    ask patches with [pcolor = green ]
+  ;    [
+  ;      set pcolor red - 3.5
+  ;    ]
+  ;    stop
+  ;  ]
+  ;  display
   tick
 end
 to criarArea
@@ -167,23 +166,23 @@ to criarArea
     set size 18
     setxy -4 33
   ]
-;  set-default-shape areasPol "square"
-;  set-default-shape areasLimp "square"
-;  set area count patches with [pcolor = green]
-;  set poluido 0
+  ;  set-default-shape areasPol "square"
+  ;  set-default-shape areasLimp "square"
+  ;  set area count patches with [pcolor = green]
+  ;  set poluido 0
   ask patches with [(pxcor > -39 and pxcor < -23) and (pycor > -35 and pycor < -20)] [
-   set dono "(agricultores 17)"
+    set dono "(agricultor 17)"
   ]
   ask patches with [(pxcor > -10 and pxcor < 6) and (pycor > -39 and pycor < -24)] [
-    set dono "(agricultores 18)"
+    set dono "(agricultor 18)"
   ]
   ask patches with [(pxcor > -38 and pxcor < -22) and (pycor > 19 and pycor < 34)] [
-    set dono "(agricultores 19)"
+    set dono "(agricultor 19)"
   ]
 end
 to criarAgricultores
-  set-default-shape agricultor "agricultor"
-  create-agricultor num-agricultores [
+  set-default-shape agricultores "agricultor"
+  create-agricultores num-agricultores [
     set color 137
     set size 5
     set fixo? false
@@ -211,8 +210,8 @@ to criarAgricultores
   ]
 end
 to criarPrefeitos
-  set-default-shape prefeito "prefeito"
-  create-prefeito num-prefeitos [
+  set-default-shape prefeitos "prefeito"
+  create-prefeitos num-prefeitos [
     set color brown + 1
     set size 5
     set fixo? true
@@ -221,8 +220,8 @@ to criarPrefeitos
   ]
 end
 to criarFiscais
-  set-default-shape fiscal "fiscal"
-  create-fiscal num-fiscais [
+  set-default-shape fiscais "fiscal"
+  create-fiscais num-fiscais [
     set color brown
     set size 5
     set fixo? false
@@ -232,8 +231,8 @@ to criarFiscais
   ]
 end
 to criarVereadores
-  set-default-shape vereador "vereador"
-  create-vereador num-vereadores [
+  set-default-shape vereadores "vereador"
+  create-vereadores num-vereadores [
     set color pink + 3.2
     set size 5
     setxy one-of [-5 -7 -3 -9] one-of [23 22 21]
@@ -244,8 +243,8 @@ to criarVereadores
   ]
 end
 to criarOngs
-  set-default-shape a-ong "ong"
-  create-a-ong num-ongs [
+  set-default-shape ongs "ong"
+  create-ongs num-ongs [
     set color brown + 3
     set size 5
     set fixo? false
@@ -257,14 +256,14 @@ to criarOngs
 end
 
 to criarEmpresarios
-  set-default-shape empresario "empresario"
+  set-default-shape empresarios "empresario"
   set setores (list "maquinas" "agrotoxicos" "fertilizantes" "sementes")
   let i 0
   while [ i < (num-empresarios - 4)] [
     set setores lput item random 4 setores setores
     set i i + 1
   ]
-  create-empresario num-empresarios [
+  create-empresarios num-empresarios [
     set color yellow + 4
     set size 5
     set fixo? false
@@ -307,15 +306,8 @@ to criarEmpresarios
 end
 to-report xaleatorio
   loop [
-      let x random-pxcor
-      if ( x > 24 ) [ report x ]
-    ]
-end
-to adcPropriedade
-  if random-float 100 > 70 [
-    ask agricultor with [propriedades = 0] [
-      set propriedades propriedades + random 4
-    ]
+    let x random-pxcor
+    if ( x > 24 ) [ report x ]
   ]
 end
 to moverAgentes
@@ -347,26 +339,27 @@ to moverAgentes
   ]
 end
 to plantar
-  ask turtles [
-    if random-float 50 > 49.9 [
+  ask agricultores [
+    if random-float 50 > 40 [
       let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
       let tempo ticks
-      ;if table:has-key? compras = true [
-      ;]
+;      if table:has-key? produtos instrumentos = true [
+;
+;      ]
     ]
   ]
 end
 to fiscalizar
   ask turtles [
     if poluicao > 99 [
-      ask agricultor [
+      ask one-of agricultores [
         let distancia self
-        ask fiscal with [distance distancia < 5] [
+        ask fiscais with [distance distancia < 5] [
           face distancia
         ]
       ]
-      ask fiscal [
-        ask agricultor-here [
+      ask fiscais [
+        ask agricultores-here [
           set multas multas + 1
         ]
       ]
@@ -376,7 +369,7 @@ end
 to impostoSalario
   ask turtles [
     if (ticks mod 360 = 0) and (ticks != 0) [
-      if is-ong? self = true or is-fiscais? self = true or is-vereadores? self = true [
+      if is-ong? self = true or is-fiscal? self = true or is-vereador? self = true [
         set saldo saldo + salario
       ]
       set saldo saldo - (imposto * saldo) / 100
@@ -385,9 +378,9 @@ to impostoSalario
 end
 to comprar
   if random-float 100 > 99 [
-    ask empresario [
+    ask empresarios [
       set agenteE self
-      ask agricultor with [distance agenteE < 5] [
+      ask agricultores with [distance agenteE < 5] [
         set agenteA self
         face agenteE
       ]
@@ -440,30 +433,30 @@ to comprarA [ produto comprasTipo prCompra ]
   ]
 end
 to produzirEmp [ prod ]
-  if random-float 100 > 50 [
+  if random-float 1000 > 800 [
     if prod = "agComum" or prod = "agPremium" or prod = "agSPremium" [
-      ask one-of empresario with [setor = "agrotoxicos"] [
+      ask one-of empresarios with [setor = "agrotoxicos"] [
         let pol item 2(table:get produtos prod)
         table:put produtos prod (list (qEmp + 1) prComp pol)
         set poluicao poluicao + pol
       ]
     ]
     if prod = "arroz" or prod = "hort" or prod = "soja"[
-      ask one-of empresario with [setor = "sementes"] [
+      ask one-of empresarios with [setor = "sementes"] [
         let pol item 2(table:get produtos prod)
         table:put produtos prod (list (qEmp + 1) prComp pol)
         set poluicao poluicao + pol
       ]
     ]
     if prod = "FComum" or prod = "FPremium" or prod = "FSPremium" [
-      ask one-of empresario with [setor = "fertilizantes"] [
+      ask one-of empresarios with [setor = "fertilizantes"] [
         let pol item 2(table:get produtos prod)
         table:put produtos prod (list (qEmp + 1) prComp pol)
         set poluicao poluicao + pol
       ]
     ]
     if prod = "semeadeira" or prod = "pulverizador" or prod = "drone" or prod = "colheitadeira" [
-      ask one-of empresario with [setor = "maquinas"] [
+      ask one-of empresarios with [setor = "maquinas"] [
         let pol item 2(table:get produtos prod)
         table:put produtos prod (list (qEmp + 1) prComp pol)
         set poluicao poluicao + pol
@@ -474,10 +467,20 @@ end
 to ajustValores
   ask turtles [
     set saldo precision saldo 2
-    set polGeral polGeral + poluicao
+    if polGeral != polGeral + poluicao [
+      set polGeral polGeral + poluicao
+      poluirRio
+    ]
   ]
 end
 
+to poluirRio
+  ask patches with [shade-of? blue pcolor] [
+    if pcolor - 0.01 >= 100 [
+      set pcolor pcolor - 0.01
+    ]
+  ]
+end
 ;to espPol
 ;  if precision ((poluido / (area + 1)) * 100) 0 != polGeral and polGeral != 0 [
 ;    sprout-areasPol 1
@@ -547,7 +550,7 @@ num-agricultores
 num-agricultores
 1
 10
-3.0
+1.0
 1
 1
 NIL
@@ -903,6 +906,28 @@ Circle -1 true false 152 143 9
 Circle -1 true false 152 166 9
 Polygon -1184463 true false 175 6 194 6 189 21 180 21
 Line -1184463 false 149 24 197 24
+
+fiscalplace
+false
+0
+Rectangle -7500403 true true 45 135 270 255
+Rectangle -16777216 true false 124 195 187 256
+Rectangle -1 true false 60 195 105 240
+Rectangle -1 true false 60 150 105 180
+Rectangle -1 true false 210 150 255 180
+Polygon -7500403 true true 30 135 285 135 240 90 75 90
+Line -16777216 false 45 135 300 135
+Line -7500403 true 154 195 154 255
+Rectangle -1 true false 210 195 255 240
+Rectangle -1 true false 135 150 180 180
+Line -1 false 90 135 105 135
+Rectangle -13345367 true false 45 135 270 150
+Line -1 false 90 135 90 150
+Line -1 false 90 135 105 135
+Line -1 false 225 150 225 135
+Line -1 false 210 135 225 135
+Line -1 false 90 150 105 150
+Line -1 false 210 150 225 150
 
 fish
 false
