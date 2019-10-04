@@ -1,4 +1,4 @@
-extensions [table]
+extensions [table matrix]
 breed [ fiscais fiscal ]
 breed [ agricultores agricultor ]
 breed [ empresarios empresario ]
@@ -13,10 +13,10 @@ breed [casas casa]
 breed [cercas cerca]
 breed [empresas empresa]
 breed [prefeituras prefeitura]
-globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui area poluido cor]
+globals [ setores mercadorias qEmp prComp agenteA agenteE polGeral polui area poluido cor parar?]
 turtles-own [ saldo taxa latifundio imposto poluicao fixo?]
 casas-own [donos]
-agricultores-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem]
+agricultores-own [ organico? propriedades multas hectares comprasAgr comprasFer comprasMaq comprasSem plantando?]
 ongs-own [ salario ]
 vereadores-own [ salario ]
 fiscais-own [ salario ]
@@ -54,6 +54,9 @@ to go
   ;    stop
   ;  ]
   ;  display
+  if parar? = true [
+    stop
+  ]
   tick
 end
 to criarArea
@@ -189,6 +192,7 @@ to criarAgricultores
     set hectares 100
     set agenteA self
     set comprasAgr table:make
+    set plantando? false
     move-to one-of patches with [dono = (word "" agenteA)]
     table:put comprasAgr (list "agComum" "agPremium" "agSPremium") (list 0 0 0 )
     set comprasFer table:make
@@ -248,7 +252,6 @@ to criarOngs
     set color brown + 3
     set size 5
     set fixo? false
-
     set saldo 50000
     set imposto 8
     set salario 14000
@@ -274,7 +277,6 @@ to criarEmpresarios
     setxy xaleatorio random-pycor
     if setor = "agrotoxicos" [
       set imposto 45
-      ; produtos nome (quantidade na empresa, preço para compra, quantidade de poluicao)
       table:put produtos "agComum" (list 1 one-of [5 10 15] 1)
       table:put produtos "agPremium" (list 1 one-of [15 20 25] 2)
       table:put produtos "agSPremium" (list 1 one-of [25 30 35] 3)
@@ -340,10 +342,10 @@ to moverAgentes
 end
 to plantar
   ask agricultores [
-    if random-float 50 > 40 [
-      let instrumentos (list one-of ["hort" "arroz" "soja"] one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
+    if random-float 50 > 40 and plantando? = false[
+      let instrumentos (listcomprassem one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
       let tempo ticks
-;      if table:has-key? produtos instrumentos = true [
+;      if table:has-key?  instrumentos = true [
 ;
 ;      ]
     ]
@@ -392,7 +394,6 @@ to comprar
         produzirEmp produto
       ] [
         ask agenteA [
-          let posicao position produto (item 0(item 0 table:to-list comprasAgr))
           if produto = "agComum" or produto = "agPremium" or produto = "agSPremium" [
             comprarA produto comprasAgr prComp
           ]
@@ -476,8 +477,10 @@ end
 
 to poluirRio
   ask patches with [shade-of? blue pcolor] [
-    if pcolor - 0.01 >= 100 [
+    ifelse pcolor - 0.01 > 100 [
       set pcolor pcolor - 0.01
+    ] [
+      set parar? true
     ]
   ]
 end
@@ -535,7 +538,7 @@ num-fiscais
 num-fiscais
 1
 10
-6.0
+0.0
 1
 1
 NIL
@@ -550,7 +553,7 @@ num-agricultores
 num-agricultores
 1
 10
-1.0
+0.0
 1
 1
 NIL
@@ -582,7 +585,7 @@ num-empresarios
 num-empresarios
 4
 8
-4.0
+0.0
 1
 1
 NIL
@@ -597,7 +600,7 @@ num-ongs
 num-ongs
 1
 10
-1.0
+0.0
 1
 1
 NIL
@@ -612,7 +615,7 @@ num-vereadores
 num-vereadores
 1
 10
-4.0
+0.0
 1
 1
 NIL
@@ -627,7 +630,7 @@ num-prefeitos
 num-prefeitos
 1
 2
-2.0
+0.0
 1
 1
 NIL
