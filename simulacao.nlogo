@@ -39,7 +39,7 @@ to go
   comprar
   impostoSalario
   ajustValores
-  plantar
+  ;plantar
   ;  ask areasPol
   ;    [ ask neighbors4 with [pcolor = green]
   ;      [ espPol ]
@@ -342,12 +342,20 @@ to moverAgentes
 end
 to plantar
   ask agricultores [
-    if random-float 50 > 40 and plantando? = false[
-      let instrumentos (listcomprassem one-of [ "agComum" "agPremium" "agSPremium" false false false ] one-of [ "FComum" "FPremium" "FSPremium" false false false ]  one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ])
+    if random-float 50 > 40 and plantando? = false [
+      loop [
+      let semente one-of ["hort" "arroz" "soja"]
+      let agrotoxico one-of [ "agComum" "agPremium" "agSPremium"]
+      let fertilizante one-of [ "FComum" "FPremium" "FSPremium"]
+      let maquina one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone"]
+      let utilizaveis []
+      if (item (position agrotoxico item 0(table:keys comprasagr))(item 0 (table:values comprasagr))) > 0 [
+
+      ]
       let tempo ticks
 ;      if table:has-key?  instrumentos = true [
-;
 ;      ]
+      ]
     ]
   ]
 end
@@ -538,7 +546,7 @@ num-fiscais
 num-fiscais
 1
 10
-0.0
+3.0
 1
 1
 NIL
@@ -553,7 +561,7 @@ num-agricultores
 num-agricultores
 1
 10
-0.0
+3.0
 1
 1
 NIL
@@ -585,7 +593,7 @@ num-empresarios
 num-empresarios
 4
 8
-0.0
+5.0
 1
 1
 NIL
@@ -600,7 +608,7 @@ num-ongs
 num-ongs
 1
 10
-0.0
+2.0
 1
 1
 NIL
@@ -615,7 +623,7 @@ num-vereadores
 num-vereadores
 1
 10
-0.0
+2.0
 1
 1
 NIL
@@ -630,7 +638,7 @@ num-prefeitos
 num-prefeitos
 1
 2
-0.0
+1.0
 1
 1
 NIL
