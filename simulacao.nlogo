@@ -321,7 +321,7 @@ to moverAgentes
     ifelse patch-ahead 0.5 != nobody [
       ifelse shade-of? blue [pcolor] of patch-ahead 0.4 [
         rt 10
-        fd 0.2
+        fd 0.007
       ][fd 0.3]
       if shade-of? blue [pcolor] of patch-here [
         ask patch-here [
