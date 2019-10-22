@@ -321,7 +321,7 @@ to moverAgentes
     ifelse patch-ahead 0.5 != nobody [
       ifelse shade-of? blue [pcolor] of patch-ahead 0.4 [
         rt 10
-        fd 0.007
+        fd 0.01
       ][fd 0.3]
       if shade-of? blue [pcolor] of patch-here [
         ask patch-here [
@@ -344,17 +344,38 @@ to plantar
   ask agricultores [
     if random-float 50 > 40 and plantando? = false [
       loop [
-      let semente one-of ["hort" "arroz" "soja"]
-      let agrotoxico one-of [ "agComum" "agPremium" "agSPremium"]
-      let fertilizante one-of [ "FComum" "FPremium" "FSPremium"]
-      let maquina one-of [ "semeadeira" "pulverizador" "colheitadeira" "drone"]
-      let utilizaveis []
-      if (item (position agrotoxico item 0(table:keys comprasagr))(item 0 (table:values comprasagr))) > 0 [
-
-      ]
-      let tempo ticks
-;      if table:has-key?  instrumentos = true [
-;      ]
+        let sementes ["hort" "arroz" "soja"]
+        let agrotoxicos [ "agComum" "agPremium" "agSPremium" false false false]
+        let fertilizantes [ "FComum" "FPremium" "FSPremium" false false false]
+        let maquinas [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ]
+        let maquina one-of maquinas
+        let semente one-of sementes
+        let agrotoxico one-of agrotoxicos
+        let fertilizante one-of fertilizantes
+        let utilizaveis table:make
+        ifelse ((item (position agrotoxico item 0(table:keys comprasagr))(item 0 (table:values comprasagr))) > 0 or agrotoxico = false) [
+          table:put utilizaveis "agrotoxico" agrotoxico
+        ] [
+          set agrotoxicos remove-item position agrotoxico agrotoxicos agrotoxicos
+        ]
+        ifelse ((item (position semente item 0(table:keys comprassem))(item 0 (table:values comprassem))) > 0) [
+          table:put utilizaveis "semente" semente
+        ] [
+          set sementes remove-item position semente sementes sementes
+        ]
+        ifelse ((item (position fertilizante item 0(table:keys comprasfer))(item 0 (table:values comprasfer))) > 0  or fertilizante = false) [
+          table:put utilizaveis "fertilizante" fertilizante
+        ] [
+          set fertilizantes remove-item position semente sementes sementes
+        ]
+        ifelse ((item (position fertilizante item 0(table:keys comprasfer))(item 0 (table:values comprasfer))) > 0  or maquina = false) [
+          table:put utilizaveis "maquina" maquina
+        ] [
+          set fertilizantes remove-item position fertilizante fertilizantes fertilizantes
+        ]
+        let tempo ticks
+        ;      if table:has-key?  instrumentos = true [
+        ;      ]
       ]
     ]
   ]
@@ -1285,7 +1306,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.4
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
