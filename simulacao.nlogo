@@ -343,11 +343,11 @@ end
 to plantar
   ask agricultores [
     if random-float 50 > 40 and plantando? = false [
-      loop [
-        let sementes ["hort" "arroz" "soja"]
-        let agrotoxicos [ "agComum" "agPremium" "agSPremium" false false false]
-        let fertilizantes [ "FComum" "FPremium" "FSPremium" false false false]
-        let maquinas [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ]
+      let sementes ["hort" "arroz" "soja"]
+      let agrotoxicos [ "agComum" "agPremium" "agSPremium" false false false]
+      let fertilizantes [ "FComum" "FPremium" "FSPremium" false false false]
+      let maquinas [ "semeadeira" "pulverizador" "colheitadeira" "drone" false false false false ]
+      while [(length sementes > 0) and (length agrotoxicos > 0) and (length fertilizantes > 0) and (length maquinas > 0)] [
         let maquina one-of maquinas
         let semente one-of sementes
         let agrotoxico one-of agrotoxicos
@@ -374,8 +374,7 @@ to plantar
           set fertilizantes remove-item position fertilizante fertilizantes fertilizantes
         ]
         let tempo ticks
-        ;      if table:has-key?  instrumentos = true [
-        ;      ]
+        if
       ]
     ]
   ]
