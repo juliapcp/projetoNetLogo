@@ -39,7 +39,7 @@ to go
   comprar
   impostoSalario
   ajustValores
-  ;plantar
+  plantar
   ;  ask areasPol
   ;    [ ask neighbors4 with [pcolor = green]
   ;      [ espPol ]
@@ -193,7 +193,9 @@ to criarAgricultores
     set agenteA self
     set comprasAgr table:make
     set plantando? false
-    move-to one-of patches with [dono = (word "" agenteA)]
+    if any? patches with  [dono = (word "" agenteA)] [
+      move-to one-of patches with [dono = (word "" agenteA)]
+    ]
     table:put comprasAgr (list "agComum" "agPremium" "agSPremium") (list 0 0 0 )
     set comprasFer table:make
     table:put comprasFer (list "FComum" "FPremium" "FSPremium" ) (list 0 0 0)
@@ -342,7 +344,7 @@ to moverAgentes
 end
 to plantar
   ask agricultores [
-    if random-float 50 > 40 and plantando? = false [
+    if random-float 50 > 49.99 and plantando? = false [
       let sementes ["hort" "arroz" "soja"]
       let agrotoxicos [ "agComum" "agPremium" "agSPremium" false false false]
       let fertilizantes [ "FComum" "FPremium" "FSPremium" false false false]
@@ -353,30 +355,38 @@ to plantar
         let agrotoxico one-of agrotoxicos
         let fertilizante one-of fertilizantes
         let utilizaveis table:make
-        ifelse ((item (position agrotoxico item 0(table:keys comprasagr))(item 0 (table:values comprasagr))) > 0 or agrotoxico = false) [
+        print item (position agrotoxico item 0(table:keys comprasagr)) (item 0 table:values comprasagr)
+        let numero 1;
+        ifelse numero > 0 or agrotoxico = false [
           table:put utilizaveis "agrotoxico" agrotoxico
         ] [
           set agrotoxicos remove-item position agrotoxico agrotoxicos agrotoxicos
         ]
-        ifelse ((item (position semente item 0(table:keys comprassem))(item 0 (table:values comprassem))) > 0) [
+        set numero item (position semente item 0(table:keys comprassem))(item 0 (table:values comprassem))
+        ifelse numero > 0 [
           table:put utilizaveis "semente" semente
         ] [
           set sementes remove-item position semente sementes sementes
         ]
-        ifelse ((item (position fertilizante item 0(table:keys comprasfer))(item 0 (table:values comprasfer))) > 0  or fertilizante = false) [
+        set numero item (position fertilizante item 0(table:keys comprasfer))(item 0 (table:values comprasfer))
+
+        ifelse numero > 0  or fertilizante = false [
           table:put utilizaveis "fertilizante" fertilizante
-        ] [
-          set fertilizantes remove-item position semente sementes sementes
-        ]
-        ifelse ((item (position fertilizante item 0(table:keys comprasfer))(item 0 (table:values comprasfer))) > 0  or maquina = false) [
-          table:put utilizaveis "maquina" maquina
         ] [
           set fertilizantes remove-item position fertilizante fertilizantes fertilizantes
         ]
+        set numero item (position maquina item 0(table:keys comprasmaq))(item 0 (table:values comprasmaq))
+        ifelse numero > 0  or maquina = false [
+          table:put utilizaveis "maquina" maquina
+        ] [
+          set maquinas remove-item position maquina maquinas maquinas
+        ]
         let tempo ticks
-        if
+            print utilizaveis
       ]
+
     ]
+
   ]
 end
 to fiscalizar
@@ -566,7 +576,7 @@ num-fiscais
 num-fiscais
 1
 10
-3.0
+4.0
 1
 1
 NIL
@@ -581,7 +591,7 @@ num-agricultores
 num-agricultores
 1
 10
-3.0
+4.0
 1
 1
 NIL
@@ -613,7 +623,7 @@ num-empresarios
 num-empresarios
 4
 8
-5.0
+6.0
 1
 1
 NIL
@@ -658,7 +668,7 @@ num-prefeitos
 num-prefeitos
 1
 2
-1.0
+2.0
 1
 1
 NIL
@@ -691,6 +701,24 @@ C
 NIL
 NIL
 1
+
+PLOT
+18
+360
+218
+510
+Poluição x Tempo
+Tempo
+Poluição
+0.0
+120.0
+0.0
+1000.0
+true
+false
+"" ""
+PENS
+"Poluição" 1.0 0 -16777216 true "polGeral" "polGeral"
 
 @#$#@#$#@
 ## O QUE É ISSO?
@@ -1305,7 +1333,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
