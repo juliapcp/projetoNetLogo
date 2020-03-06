@@ -39,21 +39,10 @@ to go
   comprar
   impostoSalario
   ajustValores
-  plantar
-  ;  ask areasPol
-  ;    [ ask neighbors4 with [pcolor = green]
-  ;      [ espPol ]
-  ;      set breed areasLimp ]
-  ;  ask patches with [pxcor = random-pxcor]
-  ;    [ espPol ]
-  ;  if polGeral >= 120 [
-  ;    ask patches with [pcolor = green ]
-  ;    [
-  ;      set pcolor red - 3.5
-  ;    ]
-  ;    stop
-  ;  ]
-  ;  display
+  ;plantar
+    if polGeral >= 120 [
+        set parar? true
+  ]
   if parar? = true [
     stop
   ]
@@ -516,7 +505,7 @@ end
 to poluirRio
   ask patches with [shade-of? blue pcolor] [
     ifelse pcolor - 0.01 > 100 [
-      set pcolor pcolor - 0.01
+      set pcolor pcolor - 0.2
     ] [
       set parar? true
     ]
@@ -623,7 +612,7 @@ num-empresarios
 num-empresarios
 4
 8
-6.0
+4.0
 1
 1
 NIL
@@ -660,10 +649,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-38
-263
-210
-296
+41
+266
+211
+299
 num-prefeitos
 num-prefeitos
 1
@@ -673,17 +662,6 @@ num-prefeitos
 1
 NIL
 HORIZONTAL
-
-MONITOR
-151
-305
-209
-350
-Poluição
-polGeral
-10
-1
-11
 
 BUTTON
 45
@@ -703,22 +681,22 @@ NIL
 1
 
 PLOT
-18
-360
-218
-510
+37
+313
+208
+465
 Poluição x Tempo
-Tempo
+Tempo (ticks)
 Poluição
 0.0
-120.0
+1.0
 0.0
-1000.0
+1.0
 true
 false
 "" ""
 PENS
-"Poluição" 1.0 0 -16777216 true "polGeral" "polGeral"
+"Poluição" 1.0 0 -16777216 true "" "plot polGeral"
 
 @#$#@#$#@
 ## O QUE É ISSO?
